@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
+import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from '@react-navigation/stack';
 
 import {
   Header,
@@ -21,6 +23,18 @@ import Display from './src/components/Display';
 import Buttons from './src/components/Buttons';
 import colors from './src/utils/colors';
 
+// const AppNavigator = createStackNavigator(
+//   {
+//     Home: HomeScreen,
+//     RandomFact: RandomFact,
+//     FavNumber: FavNumber,
+//     Quiz: Quiz,
+//   },
+//   {
+//     initialRouteName: 'Home',
+//   },
+// );
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -32,17 +46,29 @@ export default class App extends React.Component {
       data: {},
       date: 9,
       month: 10,
+      trivia: '',
     };
   }
+  componentDidMount() {
+    this.resToState();
+    this.getTrivia(22);
+  }
+  getTrivia = async number => {
+    const response = await fetch(
+      `http://numbersapi.com/${number}/trivia?fragment`,
+    );
+    const data = await response._bodyText;
+    this.setState({trivia: data});
+    console.log(this.trivia);
+  };
 
   resToState() {
     const date = new Date();
     const day = date.getUTCDate();
     const month = date.getUTCMonth() + 1;
     let url;
-
+    let triviaNumberUrl;
     url = `http://numbersapi.com/${month}/${day}/date?json`;
-
     if (url) {
       fetch(url)
         .then(response => response.json())
@@ -54,9 +80,6 @@ export default class App extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.resToState();
-  }
   showNumber(str) {
     console.log(str);
   }
@@ -125,12 +148,7 @@ export default class App extends React.Component {
             )}
           </View>
         </View>
-        {/* <FlatList
-          data={this.state.dataSource}
-          ItemSeparatorComponent={this.FlatListItemSeparator}
-          renderItem={item => this.renderItem(item)}
-          keyExtractor={item => item.id.toString()}
-        /> */}
+
         <StatusBar barStyle="light-content" />
         <Display state={this.state} />
         <Buttons operation={this.handleOperation} />
@@ -144,7 +162,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'stretch',
-    backgroundColor: colors.darker,
+    backgroundColor: '#71541e',
   },
   loader: {
     flex: 1,
@@ -159,7 +177,8 @@ const styles = StyleSheet.create({
     height: 0.5,
     height: '20%',
     width: '100%',
-    backgroundColor: 'white',
+    backgroundColor: '#03313e',
+    color: '#1ad09a',
   },
   list: {
     paddingVertical: 4,
@@ -170,5 +189,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+    marginTop: 25,
+    color: '#bf5d27',
   },
 });

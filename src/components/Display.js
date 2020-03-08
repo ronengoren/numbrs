@@ -19,7 +19,7 @@ const Display = ({state}) => (
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.dark,
+    backgroundColor: '#eeeeee',
     flex: 1,
     justifyContent: 'space-around',
     paddingHorizontal: 24,
@@ -31,12 +31,12 @@ const styles = StyleSheet.create({
   display: {
     textAlign: 'right',
     fontWeight: 'bold',
-    color: colors.white,
+    color: '#bf5d27',
     fontSize: 40,
   },
   result: {
     textAlign: 'right',
-    color: colors.white,
+    color: '#bf5d27',
     fontSize: 30,
   },
 });

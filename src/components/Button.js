@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    color: colors.white,
+    color: '#bf5d27',
     fontSize: 30,
   },
 });
