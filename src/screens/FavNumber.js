@@ -24,11 +24,10 @@ export default class Favnumber extends Component {
   }
 
   getTrivia = async number => {
-    const response = await fetch(
-      `http://numbersapi.com/${number}/trivia?fragment`,
-    );
-    const data = await response._bodyText;
+    const response = await fetch(`http://numbersapi.com/${number}/trivia`);
+    const data = await response.text();
     this.setState({trivia: data});
+    // console.log(data);
   };
 
   getData = async () => {

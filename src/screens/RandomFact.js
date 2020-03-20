@@ -16,9 +16,8 @@ class RandomFact extends Component {
     const day = date.getUTCDate();
     const month = date.getUTCMonth() + 1;
     let url;
-
+    let triviaNumberUrl;
     url = `http://numbersapi.com/${month}/${day}/date?json`;
-
     if (url) {
       fetch(url)
         .then(response => response.json())

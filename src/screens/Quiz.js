@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   questions: {
     backgroundColor: '#F5FCFF',
-    flex: 4,
+    flex: 5,
   },
   footer: {
     flex: 1,

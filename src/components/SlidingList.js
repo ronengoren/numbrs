@@ -8,9 +8,9 @@ import {
   View,
   Dimensions,
   Platform,
-  AsyncStorage,
 } from 'react-native';
 import SortableList from 'react-native-sortable-list';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const window = Dimensions.get('window');
 
@@ -23,7 +23,7 @@ export default class SlidingList extends Component {
     this.props.data.forEach(d => {
       anno.push(d.number);
     });
-    // console.warn(next,anno)
+    // console.warn(next, anno);
   }
 
   onAnswer() {
@@ -142,7 +142,7 @@ class Row extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.active !== nextProps.active) {
       Animated.timing(this._active, {
         duration: 300,

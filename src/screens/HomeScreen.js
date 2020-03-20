@@ -32,16 +32,14 @@ export default class HomeScreen extends React.Component {
     };
   }
   componentDidMount() {
-    this.resToState();
-    this.getTrivia(22);
+    // this.resToState();
+    // this.getTrivia();
   }
   getTrivia = async number => {
-    const response = await fetch(
-      `http://numbersapi.com/${number}/trivia?fragment`,
-    );
-    const data = await response._bodyText;
+    const response = await fetch(`http://numbersapi.com/${number}/trivia?json`);
+    const data = await response.text();
     this.setState({trivia: data});
-    console.log(this.trivia);
+    console.log(data);
   };
 
   resToState() {
@@ -62,9 +60,6 @@ export default class HomeScreen extends React.Component {
     }
   }
 
-  showNumber(str) {
-    console.log(str);
-  }
   handleOperation = operation => {
     if (operation === 'C') {
       this.setState({
@@ -76,6 +71,7 @@ export default class HomeScreen extends React.Component {
         display: this.state.result,
         result: '',
       });
+      this.getTrivia(this.state.result);
     } else {
       const display = this.state.display + operation;
       let result = this.state.result;
@@ -105,6 +101,7 @@ export default class HomeScreen extends React.Component {
   };
   renderItem = data => (
     <TouchableOpacity style={styles.list}>
+      {this.state.trivia}
       {/* <Text style={styles.lightText}>{data.item.name}</Text>
       <Text style={styles.lightText}>{data.item.email}</Text>
       <Text style={styles.lightText}>{data.item.company.name}</Text> */}
@@ -128,45 +125,10 @@ export default class HomeScreen extends React.Component {
     }
     return (
       <View style={styles.container}>
-        <Image
-          source={
-            toggled
-              ? require('../../assets/nmbrs-logo-white.png')
-              : require('../../assets/nmbrs-logo.png')
-          }
-          style={styles.logo}
-        />
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.navigate('RandomFact', {
-              toggled: this.state.toggled,
-            });
-          }}>
-          <Text style={[styles.text, themetext]}>Random Text</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.navigate('FavNumber');
-          }}>
-          <Text style={[styles.text, themetext]}>Favorite Number</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.navigate('Quiz', {
-              toggled: this.state.toggled,
-            });
-          }}>
-          <Text style={[styles.text, themetext]}>History Quiz</Text>
-        </TouchableOpacity>
-        <Switch
-          trackColor={{false: '#114511', true: '#F5FCFF'}}
-          onValueChange={value => this.setState({toggled: value})}
-          value={this.state.toggled}
-        />
-        {/* <View style={styles.fact}>
+        <View style={styles.fact}>
           <View style={[styles.resultCcontainer]}>
-            {this.state.data ? (
-              <Text style={[styles.random]}>{this.state.data.text}</Text>
+            {this.state.trivia ? (
+              <Text style={[styles.random]}>{this.state.trivia}</Text>
             ) : (
               <ActivityIndicator />
             )}
@@ -175,7 +137,7 @@ export default class HomeScreen extends React.Component {
 
         <StatusBar barStyle="light-content" />
         <Display state={this.state} />
-        <Buttons operation={this.handleOperation} /> */}
+        <Buttons operation={this.handleOperation} />
       </View>
     );
   }
