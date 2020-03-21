@@ -36,10 +36,10 @@ export default class HomeScreen extends React.Component {
     // this.getTrivia();
   }
   getTrivia = async number => {
-    const response = await fetch(`http://numbersapi.com/${number}/trivia?json`);
+    const response = await fetch(`http://numbersapi.com/${number}/trivia`);
     const data = await response.text();
     this.setState({trivia: data});
-    console.log(data);
+    console.log(response);
   };
 
   resToState() {
@@ -65,6 +65,7 @@ export default class HomeScreen extends React.Component {
       this.setState({
         display: '',
         result: '',
+        trivia: '',
       });
     } else if (operation === '=') {
       this.setState({
@@ -130,7 +131,11 @@ export default class HomeScreen extends React.Component {
             {this.state.trivia ? (
               <Text style={[styles.random]}>{this.state.trivia}</Text>
             ) : (
-              <ActivityIndicator />
+              <Text style={[styles.random]}>
+                Make a calculation to see a fact!
+              </Text>
+
+              //              <ActivityIndicator />
             )}
           </View>
         </View>
