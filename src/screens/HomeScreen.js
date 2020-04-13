@@ -142,6 +142,7 @@ export default class HomeScreen extends React.Component {
 
         <StatusBar barStyle="light-content" />
         <Display state={this.state} />
+
         <Buttons operation={this.handleOperation} />
       </View>
     );
@@ -154,13 +155,14 @@ const styles = StyleSheet.create({
     // flex: 1,
     // justifyContent: 'center',
     // alignItems: 'stretch',
-    // backgroundColor: '#71541e',
+    backgroundColor: '#fff',
     //numbers
     flex: 1,
     alignSelf: 'stretch',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   loader: {
     flex: 1,
     justifyContent: 'center',
@@ -174,20 +176,23 @@ const styles = StyleSheet.create({
     height: 0.5,
     height: '20%',
     width: '100%',
-    backgroundColor: '#03313e',
-    color: '#1ad09a',
+    backgroundColor: '#fff',
+    color: '#008033',
+    borderBottomWidth: 1,
+    borderColor: '#000000',
   },
   list: {
     paddingVertical: 4,
     margin: 5,
-    backgroundColor: '#fff',
+    backgroundColor: '#000000',
   },
   random: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
     marginTop: 25,
-    color: '#bf5d27',
+    color: '#000000',
+    fontFamily: 'AvenirNext-UltraLight',
   },
   logo: {
     height: 135,

@@ -71,8 +71,8 @@ export default class Favnumber extends Component {
       backgroundColor: '#F5FCFF',
     };
     const themebutton = {
-      backgroundColor: '#fff',
-      color: '#fff',
+      backgroundColor: '#008033',
+      color: '#008033',
     };
     return (
       <View style={[styles.container, themebg]}>

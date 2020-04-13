@@ -23,7 +23,7 @@ export default {
 
   placeHolderOutput: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#008033',
     justifyContent: 'center',
     alignItems: 'flex-end',
     paddingRight: 15,
