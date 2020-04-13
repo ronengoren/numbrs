@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#008033',
     padding: 16,
     flex: 1,
     marginTop: 7,
@@ -253,6 +253,6 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 18,
-    color: '#222222',
+    color: '#000000',
   },
 });

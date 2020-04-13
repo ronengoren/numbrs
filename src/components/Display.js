@@ -19,10 +19,10 @@ const Display = ({state}) => (
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#eeeeee',
+    backgroundColor: '#fff',
     flex: 1,
     justifyContent: 'space-around',
-    paddingHorizontal: 24,
+    paddingHorizontal: 0,
   },
   safe: {
     flex: 1,
@@ -30,14 +30,16 @@ const styles = StyleSheet.create({
   },
   display: {
     textAlign: 'right',
-    fontWeight: 'bold',
-    color: '#bf5d27',
+    // fontWeight: 'bold',
+    color: '#000000',
     fontSize: 40,
+    fontFamily: 'AvenirNext-UltraLight',
   },
   result: {
     textAlign: 'right',
-    color: '#bf5d27',
+    color: '#fff',
     fontSize: 30,
+    fontFamily: 'AvenirNext-UltraLight',
   },
 });
 

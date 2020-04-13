@@ -29,8 +29,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    color: '#bf5d27',
+    color: '#000000',
     fontSize: 30,
+    fontFamily: 'AvenirNext-UltraLight',
   },
 });
 

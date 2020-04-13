@@ -46,17 +46,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 3,
     flexDirection: 'row',
+    borderTopWidth: 1,
+    borderColor: '#000000',
+    fontFamily: 'AvenirNext-UltraLight',
   },
   row: {
     flex: 1,
     flexDirection: 'row',
+    fontFamily: 'AvenirNext-UltraLight',
   },
   numbers: {
     flex: 3,
+    fontFamily: 'AvenirNext-UltraLight',
   },
   operations: {
     flex: 1,
-    backgroundColor: '#03313e',
+    backgroundColor: '#fff',
+    fontFamily: 'AvenirNext-UltraLight',
   },
 });
 
