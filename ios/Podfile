@@ -1,5 +1,6 @@
 platform :ios, '13.1'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+use_frameworks!
 
 target 'numbrs' do
   # Pods for numbrs
