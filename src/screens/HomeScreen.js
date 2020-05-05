@@ -70,6 +70,7 @@ export default class HomeScreen extends React.Component {
       month: 10,
       trivia: '',
       toggled: false,
+      loader: false,
     };
     state = {
       example: EXAMPLES[0],
@@ -121,6 +122,7 @@ export default class HomeScreen extends React.Component {
     const response = await fetch(`http://numbersapi.com/${number}/trivia`);
     const data = await response.text();
     this.setState({trivia: data});
+
     console.log(response);
   };
 
@@ -154,6 +156,8 @@ export default class HomeScreen extends React.Component {
         display: this.state.result,
         result: '',
       });
+      // this.setState({loader: true});
+
       this.getTrivia(this.state.result);
     } else {
       const display = this.state.display + operation;
@@ -205,127 +209,66 @@ export default class HomeScreen extends React.Component {
     const themetext = {
       color: toggled ? '#F5FCFF' : '#114511',
     };
-    const themebg = {
-      backgroundColor: toggled ? '#114511' : '#F5FCFF',
-    };
-    if (this.state.loading) {
+
+    if (this.state.loader) {
       return (
-        <View style={styles.loader}>
-          <ActivityIndicator size="large" color="#0c9" />
-        </View>
-      );
-    }
-    return (
-      <View style={{flex: 1}}>
-        <ExamplePicker
-          example={example}
-          examples={EXAMPLES}
-          onChange={(e, index) => {
-            this.stopAnimation();
-            this.setState({example: EXAMPLES[index]});
-          }}
-        />
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <LottieView
             ref={this.setAnim}
             autoPlay={!progress}
-            // style={[
-            //   example.width && {width: example.width},
-            //   isInverse && styles.lottieViewInvse,
-            // ]}
-            // source={example.getJson()}
-            source={require('./animations/HamburgerArrow.json')}
+            source={require('../screens/animations/HamburgerArrow.json')}
             progress={progress}
             loop={loop}
             enableMergePathsAndroidForKitKatAndAbove
           />
+          {/* <ActivityIndicator size="large" color="#0c9" /> */}
         </View>
-        <View style={{paddingBottom: 20, paddingHorizontal: 10}}>
-          <View style={styles.controlsRow}>
-            <TouchableOpacity
-              onPress={() => {
-                this.stopAnimation();
-                this.setState(state => ({loop: !state.loop}));
-              }}
-              disabled={!!progress}>
-              <Image
-                style={[
-                  styles.controlsIcon,
-                  loop && styles.controlsIconEnabled,
-                  !!progress && styles.controlsIconDisabled,
-                ]}
-                resizeMode="contain"
-                source={loopIcon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.playButton}
-              onPress={this.onPlayPress}>
-              <Image
-                style={styles.playButtonIcon}
-                resizeMode="contain"
-                source={isPlaying ? pauseIcon : playIcon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.onInversePress}>
-              <Image
-                style={styles.controlsIcon}
-                resizeMode="contain"
-                source={inverseIcon}
-              />
-            </TouchableOpacity>
+      );
+    }
+    return (
+      <View style={styles.container}>
+        <View style={styles.fact}>
+          {this.state.trivia ? (
+            <Text style={[styles.random]}>{this.state.trivia}</Text>
+          ) : (
+            <LottieView
+              ref={this.setAnim}
+              autoPlay={!progress}
+              source={require('../screens/animations/HamburgerArrow.json')}
+              progress={progress}
+              loop={loop}
+              enableMergePathsAndroidForKitKatAndAbove
+            />
+          )}
+
+          <View style={[styles.resultCcontainer]}>
+            {/* {this.state.trivia ? (
+              <Text style={[styles.random]}>{this.state.trivia}</Text>
+            ) : (
+              <View style={[styles.resultCcontainer]}>
+                <Text style={[styles.random]}>
+                  Make a calculation to see a fact!
+                </Text>
+                <LottieView
+                  ref={this.setAnim}
+                  autoPlay={!progress}
+                  source={require('../screens/animations/HamburgerArrow.json')}
+                  progress={progress}
+                  loop={loop}
+                  enableMergePathsAndroidForKitKatAndAbove
+                />
+              </View>
+                    <ActivityIndicator />
+            )} */}
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingBottom: 10,
-            }}>
-            <Text>Use Imperative API:</Text>
-          </View>
-          <Switch
-            onValueChange={i => {
-              this.stopAnimation();
-              this.setState(() => ({
-                progress: !i ? new Animated.Value(0) : undefined,
-              }));
-            }}
-            value={!progress}
-          />
         </View>
-        <View style={{paddingBottom: 10}} />
-        <View>
-          <Text>Progress:</Text>
-        </View>
-        <AnimatedSlider
-          minimumValue={0}
-          maximumValue={1}
-          value={progress || 0}
-          onValueChange={this.onProgressChange}
-          disabled={!progress}
-        />
+
+        <StatusBar barStyle="light-content" />
+
+        <Display state={this.state} />
+
+        <Buttons operation={this.handleOperation} />
       </View>
-
-      // <View style={styles.container}>
-      //   <View style={styles.fact}>
-      //     <View style={[styles.resultCcontainer]}>
-      //       {this.state.trivia ? (
-      //         <Text style={[styles.random]}>{this.state.trivia}</Text>
-      //       ) : (
-      //         <Text style={[styles.random]}>
-      //           Make a calculation to see a fact!
-      //         </Text>
-
-      //         //              <ActivityIndicator />
-      //       )}
-      //     </View>
-      //   </View>
-
-      //   <StatusBar barStyle="light-content" />
-      //   <Display state={this.state} />
-
-      //   <Buttons operation={this.handleOperation} />
-      // </View>
     );
   }
 }
@@ -347,6 +290,7 @@ const styles = StyleSheet.create({
 
   loader: {
     flex: 1,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -423,3 +367,93 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
 });
+
+// <View style={{flex: 1}}>
+//   <ExamplePicker
+//     example={example}
+//     examples={EXAMPLES}
+//     onChange={(e, index) => {
+//       this.stopAnimation();
+//       this.setState({example: EXAMPLES[index]});
+//     }}
+//   />
+//   <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+//     <LottieView
+//       ref={this.setAnim}
+//       autoPlay={!progress}
+//       // style={[
+//       //   example.width && {width: example.width},
+//       //   isInverse && styles.lottieViewInvse,
+//       // ]}
+//       // source={example.getJson()}
+//       source={require('./animations/HamburgerArrow.json')}
+//       progress={progress}
+//       loop={loop}
+//       enableMergePathsAndroidForKitKatAndAbove
+//     />
+//   </View>
+//   <View style={{paddingBottom: 20, paddingHorizontal: 10}}>
+//     <View style={styles.controlsRow}>
+//       <TouchableOpacity
+//         onPress={() => {
+//           this.stopAnimation();
+//           this.setState(state => ({loop: !state.loop}));
+//         }}
+//         disabled={!!progress}>
+//         <Image
+//           style={[
+//             styles.controlsIcon,
+//             loop && styles.controlsIconEnabled,
+//             !!progress && styles.controlsIconDisabled,
+//           ]}
+//           resizeMode="contain"
+//           source={loopIcon}
+//         />
+//       </TouchableOpacity>
+//       <TouchableOpacity
+//         style={styles.playButton}
+//         onPress={this.onPlayPress}>
+//         <Image
+//           style={styles.playButtonIcon}
+//           resizeMode="contain"
+//           source={isPlaying ? pauseIcon : playIcon}
+//         />
+//       </TouchableOpacity>
+//       <TouchableOpacity onPress={this.onInversePress}>
+//         <Image
+//           style={styles.controlsIcon}
+//           resizeMode="contain"
+//           source={inverseIcon}
+//         />
+//       </TouchableOpacity>
+//     </View>
+//     <View
+//       style={{
+//         flexDirection: 'row',
+//         justifyContent: 'space-between',
+//         paddingBottom: 10,
+//       }}>
+//       <Text>Use Imperative API:</Text>
+//     </View>
+//     <Switch
+//       onValueChange={i => {
+//         this.stopAnimation();
+//         this.setState(() => ({
+//           progress: !i ? new Animated.Value(0) : undefined,
+//         }));
+//       }}
+//       value={!progress}
+//     />
+//   </View>
+//   <View style={{paddingBottom: 10}} />
+//   <View>
+//     <Text>Progress:</Text>
+//   </View>
+//   <AnimatedSlider
+//     minimumValue={0}
+//     maximumValue={1}
+//     value={progress || 0}
+//     onValueChange={this.onProgressChange}
+//     disabled={!progress}
+//   />
+// </View>
