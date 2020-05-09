@@ -77,7 +77,7 @@ export default class HomeScreen extends React.Component {
       duration: 3000,
       isPlaying: true,
       isInverse: false,
-      loop: true,
+      loop: false,
     };
   }
   manageAnimation = shouldPlay => {
@@ -150,11 +150,13 @@ export default class HomeScreen extends React.Component {
         display: '',
         result: '',
         trivia: '',
+        loader: false,
       });
     } else if (operation === '=') {
       this.setState({
         display: this.state.result,
         result: '',
+        loader: true,
       });
       // this.setState({loader: true});
 
@@ -212,23 +214,56 @@ export default class HomeScreen extends React.Component {
 
     if (this.state.loader) {
       return (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <LottieView
-            ref={this.setAnim}
-            autoPlay={!progress}
-            source={require('../screens/animations/HamburgerArrow.json')}
-            progress={progress}
-            loop={loop}
-            enableMergePathsAndroidForKitKatAndAbove
-          />
-          {/* <ActivityIndicator size="large" color="#0c9" /> */}
+        <View style={styles.container}>
+          <View style={styles.fact}>
+            {this.state.trivia ? (
+              <Text style={[styles.random]}>{this.state.trivia}</Text>
+            ) : (
+              <LottieView
+                ref={this.setAnim}
+                autoPlay={!progress}
+                source={require('../screens/animations/HamburgerArrow.json')}
+                progress={progress}
+                loop={loop}
+                enableMergePathsAndroidForKitKatAndAbove
+              />
+            )}
+
+            <View style={[styles.resultCcontainer]}>
+              {/* {this.state.trivia ? (
+              <Text style={[styles.random]}>{this.state.trivia}</Text>
+            ) : (
+              <View style={[styles.resultCcontainer]}>
+                <Text style={[styles.random]}>
+                  Make a calculation to see a fact!
+                </Text>
+                <LottieView
+                  ref={this.setAnim}
+                  autoPlay={!progress}
+                  source={require('../screens/animations/HamburgerArrow.json')}
+                  progress={progress}
+                  loop={loop}
+                  enableMergePathsAndroidForKitKatAndAbove
+                />
+              </View>
+                    <ActivityIndicator />
+            )} */}
+            </View>
+          </View>
+
+          <StatusBar barStyle="light-content" />
+
+          <Display state={this.state} />
+
+          <Buttons operation={this.handleOperation} />
         </View>
       );
     }
     return (
       <View style={styles.container}>
         <View style={styles.fact}>
-          {this.state.trivia ? (
+          <Text style={[styles.random]}>Make a calculation to see a fact!</Text>
+          {/* {this.state.trivia ? (
             <Text style={[styles.random]}>{this.state.trivia}</Text>
           ) : (
             <LottieView
@@ -239,7 +274,7 @@ export default class HomeScreen extends React.Component {
               loop={loop}
               enableMergePathsAndroidForKitKatAndAbove
             />
-          )}
+          )} */}
 
           <View style={[styles.resultCcontainer]}>
             {/* {this.state.trivia ? (
@@ -315,8 +350,8 @@ const styles = StyleSheet.create({
   random: {
     fontSize: 20,
     textAlign: 'center',
-    margin: 10,
-    marginTop: 25,
+    // margin: 10,
+    // marginTop: 25,
     color: '#000000',
     fontFamily: 'AvenirNext-UltraLight',
   },
