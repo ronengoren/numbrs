@@ -228,27 +228,6 @@ export default class HomeScreen extends React.Component {
                 enableMergePathsAndroidForKitKatAndAbove
               />
             )}
-
-            <View style={[styles.resultCcontainer]}>
-              {/* {this.state.trivia ? (
-              <Text style={[styles.random]}>{this.state.trivia}</Text>
-            ) : (
-              <View style={[styles.resultCcontainer]}>
-                <Text style={[styles.random]}>
-                  Make a calculation to see a fact!
-                </Text>
-                <LottieView
-                  ref={this.setAnim}
-                  autoPlay={!progress}
-                  source={require('../screens/animations/HamburgerArrow.json')}
-                  progress={progress}
-                  loop={loop}
-                  enableMergePathsAndroidForKitKatAndAbove
-                />
-              </View>
-                    <ActivityIndicator />
-            )} */}
-            </View>
           </View>
 
           <StatusBar barStyle="light-content" />
@@ -263,39 +242,6 @@ export default class HomeScreen extends React.Component {
       <View style={styles.container}>
         <View style={styles.fact}>
           <Text style={[styles.random]}>Make a calculation to see a fact!</Text>
-          {/* {this.state.trivia ? (
-            <Text style={[styles.random]}>{this.state.trivia}</Text>
-          ) : (
-            <LottieView
-              ref={this.setAnim}
-              autoPlay={!progress}
-              source={require('../screens/animations/HamburgerArrow.json')}
-              progress={progress}
-              loop={loop}
-              enableMergePathsAndroidForKitKatAndAbove
-            />
-          )} */}
-
-          <View style={[styles.resultCcontainer]}>
-            {/* {this.state.trivia ? (
-              <Text style={[styles.random]}>{this.state.trivia}</Text>
-            ) : (
-              <View style={[styles.resultCcontainer]}>
-                <Text style={[styles.random]}>
-                  Make a calculation to see a fact!
-                </Text>
-                <LottieView
-                  ref={this.setAnim}
-                  autoPlay={!progress}
-                  source={require('../screens/animations/HamburgerArrow.json')}
-                  progress={progress}
-                  loop={loop}
-                  enableMergePathsAndroidForKitKatAndAbove
-                />
-              </View>
-                    <ActivityIndicator />
-            )} */}
-          </View>
         </View>
 
         <StatusBar barStyle="light-content" />
@@ -331,12 +277,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   fact: {
+    marginTop: 30,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: 0.5,
     height: '20%',
-    width: '100%',
+    width: '90%',
     backgroundColor: '#fff',
     color: '#008033',
     borderBottomWidth: 1,
@@ -350,7 +297,7 @@ const styles = StyleSheet.create({
   random: {
     fontSize: 20,
     textAlign: 'center',
-    // margin: 10,
+    margin: 30,
     // marginTop: 25,
     color: '#000000',
     fontFamily: 'AvenirNext-UltraLight',
