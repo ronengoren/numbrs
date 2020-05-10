@@ -121,9 +121,14 @@ export default class HomeScreen extends React.Component {
   getTrivia = async number => {
     const response = await fetch(`http://numbersapi.com/${number}/trivia`);
     const data = await response.text();
-    this.setState({trivia: data});
+    if (response.status !== 200) {
+      this.setState({trivia: 'We couldn’t find a fact for this number :('});
 
-    console.log(response);
+      console.log('res');
+    } else {
+      this.setState({trivia: data});
+      console.log(response);
+    }
   };
 
   resToState() {
@@ -163,7 +168,7 @@ export default class HomeScreen extends React.Component {
       if (this.state.result) {
         this.setState({
           display: this.state.result,
-          result: '',
+          // result: '',
           loader: true,
         });
       }
