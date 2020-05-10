@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   questions: {
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#fff',
     flex: 5,
   },
   footer: {
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   button: {
-    backgroundColor: '#ff0000',
+    backgroundColor: '#fff',
     color: 'black',
   },
 });

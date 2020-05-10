@@ -44,9 +44,9 @@ class Buttons extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 3,
+    flex: 2,
     flexDirection: 'row',
-    borderTopWidth: 1,
+    borderTopWidth: 0.5,
     borderColor: '#000000',
     fontFamily: 'AvenirNext-UltraLight',
   },

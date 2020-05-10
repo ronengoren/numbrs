@@ -122,7 +122,7 @@ export default class HomeScreen extends React.Component {
     const response = await fetch(`http://numbersapi.com/${number}/trivia`);
     const data = await response.text();
     if (response.status !== 200) {
-      this.setState({trivia: 'We couldn’t find a fact for this number :('});
+      this.setState({trivia: 'We couldn’t find a fact for this number YET :('});
 
       console.log('res');
     } else {
@@ -228,10 +228,12 @@ export default class HomeScreen extends React.Component {
 
     if (this.state.loader) {
       return (
-        <View style={styles.container}>
+        <View style={styles.container} accessible={true}>
           <View style={styles.fact}>
             {this.state.trivia ? (
-              <Text style={[styles.random]}>{this.state.trivia}</Text>
+              <Text style={[styles.random]} adjustsFontSizeToFit>
+                {this.state.trivia}
+              </Text>
             ) : (
               <LottieView
                 ref={this.setAnim}
@@ -272,15 +274,15 @@ const PLAY_BUTTON_SIZE = 60;
 const styles = StyleSheet.create({
   container: {
     //calc
-    // flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'stretch',
+    flex: 1,
+    justifyContent: 'center',
+    // alignItems: 'center',
     backgroundColor: '#fff',
     //numbers
-    flex: 1,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
+    // alignSelf: 'stretch',
+    // justifyContent: 'center',
     alignItems: 'center',
+    // marginTop: 20,
   },
 
   loader: {
@@ -291,17 +293,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   fact: {
-    marginTop: 30,
+    margin: 5,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 0.5,
-    height: '20%',
+    // height: 0.5,
+    // height: '100%',
     width: '90%',
     backgroundColor: '#fff',
     color: '#008033',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     borderColor: '#000000',
+    marginTop: 30,
   },
   list: {
     paddingVertical: 4,
@@ -312,8 +315,12 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 20,
     textAlign: 'center',
-    margin: 30,
-    // marginTop: 25,
+    justifyContent: 'center',
+    padding: 0,
+
+    // margin: 30,
+    marginTop: 50,
+
     color: '#000000',
     fontFamily: 'AvenirNext-UltraLight',
     textShadowColor: 'black',
@@ -340,7 +347,7 @@ const styles = StyleSheet.create({
     width: PLAY_BUTTON_SIZE,
     height: PLAY_BUTTON_SIZE,
     borderRadius: PLAY_BUTTON_SIZE / 2,
-    backgroundColor: '#1d8bf1',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },

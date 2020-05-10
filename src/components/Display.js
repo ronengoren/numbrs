@@ -8,11 +8,11 @@ const Display = ({state}) => (
       <Text style={styles.display} adjustsFontSizeToFit numberOfLines={1}>
         {state.display}
       </Text>
-      {state.result !== '' && (
+      {/* {state.result !== '' && (
         <Text style={styles.result} adjustsFontSizeToFit numberOfLines={1}>
           {state.result}
         </Text>
-      )}
+      )} */}
     </SafeAreaView>
   </View>
 );
@@ -20,7 +20,7 @@ const Display = ({state}) => (
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    flex: 1,
+    flex: 0.5,
     justifyContent: 'space-around',
     paddingHorizontal: 0,
   },
@@ -29,14 +29,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   display: {
-    textAlign: 'right',
-    // fontWeight: 'bold',
+    textAlign: 'center',
+    // fontWeight: '400',
     color: '#000000',
     fontSize: 40,
     fontFamily: 'AvenirNext-UltraLight',
   },
   result: {
-    textAlign: 'right',
+    textAlign: 'center',
     color: '#fff',
     fontSize: 30,
     fontFamily: 'AvenirNext-UltraLight',
