@@ -153,16 +153,25 @@ export default class HomeScreen extends React.Component {
         loader: false,
       });
     } else if (operation === '=') {
-      this.setState({
-        display: this.state.result,
-        result: '',
-        loader: true,
-      });
-      // this.setState({loader: true});
+      if (!this.state.result) {
+        this.setState({
+          display: this.state.result,
+          result: '',
+          loader: false,
+        });
+      }
+      if (this.state.result) {
+        this.setState({
+          display: this.state.result,
+          result: '',
+          loader: true,
+        });
+      }
 
       this.getTrivia(this.state.result);
     } else {
       const display = this.state.display + operation;
+
       let result = this.state.result;
       try {
         let fixedOperation = display.split('×').join('*');
@@ -295,12 +304,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   random: {
+    flex: 1,
     fontSize: 20,
     textAlign: 'center',
     margin: 30,
     // marginTop: 25,
     color: '#000000',
     fontFamily: 'AvenirNext-UltraLight',
+    textShadowColor: 'black',
+    textShadowRadius: 1,
   },
   logo: {
     height: 135,
