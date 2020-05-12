@@ -12,6 +12,8 @@ import {
   Switch,
   Animated,
   Easing,
+  TouchableHighlight,
+  Modal,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import Display from '../../src/components/Display';
@@ -71,6 +73,10 @@ export default class HomeScreen extends React.Component {
       trivia: '',
       toggled: false,
       loader: false,
+      dateData: {},
+      dateIcon: false,
+      modalVisible: false,
+      modalLoop: false,
     };
     state = {
       example: EXAMPLES[0],
@@ -80,6 +86,7 @@ export default class HomeScreen extends React.Component {
       loop: false,
     };
   }
+
   manageAnimation = shouldPlay => {
     if (!this.state.progress) {
       if (shouldPlay) {
@@ -116,7 +123,7 @@ export default class HomeScreen extends React.Component {
     this.anim = anim;
   };
   componentDidMount() {
-    // this.getTrivia();
+    this.resToState();
   }
   getTrivia = async number => {
     const response = await fetch(`http://numbersapi.com/${number}/trivia`);
@@ -133,7 +140,7 @@ export default class HomeScreen extends React.Component {
 
   resToState() {
     const date = new Date();
-    const day = date.getUTCDate();
+    const day = date.getDate();
     const month = date.getUTCMonth() + 1;
     let url;
     let triviaNumberUrl;
@@ -143,11 +150,21 @@ export default class HomeScreen extends React.Component {
         .then(response => response.json())
         .catch(err => console.warn('fetch error' + err))
         .then(json => {
-          this.setState({data: json});
+          this.setState({dateData: json});
+          console.log(json);
         })
         .catch(err => console.warn('json not loaded' + err));
     }
   }
+  setModalVisible = visible => {
+    this.setState({modalVisible: visible});
+  };
+  // alert(this.state.dateData.text);
+  onDatePress = () => {
+    if (this.state.dateData.text) {
+      alert(this.state.dateData.text);
+    }
+  };
 
   handleOperation = operation => {
     if (operation === 'C') {
@@ -219,6 +236,8 @@ export default class HomeScreen extends React.Component {
       progress,
       loop,
       example,
+      modalVisible,
+      modalLoop,
     } = this.state;
 
     const {toggled} = this.state;
@@ -254,10 +273,73 @@ export default class HomeScreen extends React.Component {
         </View>
       );
     }
+    // this.state.dateData.text
     return (
       <View style={styles.container}>
         <View style={styles.fact}>
-          <Text style={[styles.random]}>Make a calculation to see a fact!</Text>
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                Alert.alert('Modal has been closed.');
+              }}>
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <LottieView
+                    ref={this.setAnim}
+                    autoPlay={!progress}
+                    source={require('../screens/animations/modalAnimation.json')}
+                    progress={progress}
+                    loop={modalLoop}
+                    enableMergePathsAndroidForKitKatAndAbove
+                  />
+                  <Text style={styles.modalText}>
+                    {this.state.dateData.text}
+                  </Text>
+                </View>
+                <TouchableHighlight
+                  style={{...styles.openButton, backgroundColor: '#001A54'}}
+                  onPress={() => {
+                    this.setModalVisible(!modalVisible);
+                  }}>
+                  <Text style={styles.textStyle}>Nice!</Text>
+                </TouchableHighlight>
+              </View>
+            </Modal>
+
+            <Text style={[styles.random]}>Welcome to EQWL!</Text>
+
+            {this.state.dateData.text ? (
+              <TouchableHighlight
+                style={styles.playButton}
+                onPress={() => {
+                  this.setModalVisible(true);
+                }}>
+                <LottieView
+                  ref={this.setAnim}
+                  autoPlay={!progress}
+                  source={require('../screens/animations/dateAnimation.json')}
+                  progress={progress}
+                  loop={loop}
+                  enableMergePathsAndroidForKitKatAndAbove
+                />
+              </TouchableHighlight>
+            ) : (
+              <View style={styles.playButton}>
+                <LottieView
+                  ref={this.setAnim}
+                  autoPlay={progress}
+                  source={require('../screens/animations/dateAnimation.json')}
+                  progress={progress}
+                  loop={loop}
+                  enableMergePathsAndroidForKitKatAndAbove
+                />
+              </View>
+            )}
+            <Text style={[styles.randomText]}>Calculate for A Fact!</Text>
+          </View>
         </View>
 
         <StatusBar barStyle="light-content" />
@@ -269,7 +351,7 @@ export default class HomeScreen extends React.Component {
     );
   }
 }
-const PLAY_BUTTON_SIZE = 60;
+const PLAY_BUTTON_SIZE = 120;
 
 const styles = StyleSheet.create({
   container: {
@@ -295,8 +377,8 @@ const styles = StyleSheet.create({
   fact: {
     margin: 5,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    // alignItems: 'center',
     // height: 0.5,
     // height: '100%',
     width: '90%',
@@ -304,7 +386,7 @@ const styles = StyleSheet.create({
     color: '#008033',
     borderBottomWidth: 0.5,
     borderColor: '#000000',
-    marginTop: 30,
+    marginTop: 83,
   },
   list: {
     paddingVertical: 4,
@@ -313,30 +395,35 @@ const styles = StyleSheet.create({
   },
   random: {
     flex: 1,
-    fontSize: 20,
+    fontSize: 25,
     textAlign: 'center',
     justifyContent: 'center',
     padding: 0,
 
     // margin: 30,
-    marginTop: 50,
+    marginTop: 10,
 
     color: '#000000',
     fontFamily: 'AvenirNext-UltraLight',
     textShadowColor: 'black',
     textShadowRadius: 1,
   },
-  logo: {
-    height: 135,
-    width: 166,
-    marginTop: 20,
-    marginBottom: 20,
+  randomText: {
+    flex: 1,
+    fontSize: 21,
+
+    color: '#000000',
+    fontFamily: 'AvenirNext-UltraLight',
+    textShadowColor: 'black',
+    textShadowRadius: 1,
+    padding: 2,
   },
+
   text: {
     alignSelf: 'stretch',
     fontSize: 30,
     textAlign: 'left',
-    marginBottom: 20,
+    marginBottom: 40,
   },
   controlsRow: {
     flexDirection: 'row',
@@ -344,12 +431,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   playButton: {
+    flex: 1,
     width: PLAY_BUTTON_SIZE,
     height: PLAY_BUTTON_SIZE,
     borderRadius: PLAY_BUTTON_SIZE / 2,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'stretch',
+    paddingTop: 70,
   },
   playButtonIcon: {
     width: 16,
@@ -371,6 +460,65 @@ const styles = StyleSheet.create({
   },
   lottieViewInvse: {
     backgroundColor: 'black',
+  },
+  button: {
+    borderRadius: 5,
+    padding: 5,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    // flexDirection: 'column',
+
+    alignItems: 'center',
+  },
+  modalView: {
+    justifyContent: 'flex-start',
+
+    // margin: 20,
+    // backgroundColor: 'white',
+    // borderRadius: 20,
+    // padding: 20,
+    // alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    height: 390,
+    width: 100 + '%',
+  },
+  openButton: {
+    backgroundColor: '#001A54',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: '#DDE6EF',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    flex: 1,
+    justifyContent: 'center',
+    marginTop: 130,
+    alignContent: 'center',
+    // marginBottom: 15,
+    textAlign: 'center',
+
+    fontFamily: 'AvenirNext-UltraLight',
+    fontSize: 18,
+    textShadowColor: 'black',
+    textShadowRadius: 1,
+    padding: 65,
+    // borderWidth: 2,
+
+    // borderRadius: 20,
+    // lineHeight: 100,
   },
 });
 
