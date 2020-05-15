@@ -13,8 +13,9 @@ import {
   Animated,
   Easing,
   TouchableHighlight,
-  Modal,
 } from 'react-native';
+import Modal from 'react-native-modal';
+
 import Slider from '@react-native-community/slider';
 import Display from '../../src/components/Display';
 import Buttons from '../../src/components/Buttons';
@@ -126,12 +127,11 @@ export default class HomeScreen extends React.Component {
     this.resToState();
   }
   getTrivia = async number => {
-    const response = await fetch(`http://numbersapi.com/${number}/trivia`);
+    const round = Math.round(number);
+    const response = await fetch(`http://numbersapi.com/${round}/trivia`);
     const data = await response.text();
     if (response.status !== 200) {
       this.setState({trivia: 'We couldn’t find a fact for this number YET :('});
-
-      console.log('res');
     } else {
       this.setState({trivia: data});
       console.log(response);
@@ -150,7 +150,7 @@ export default class HomeScreen extends React.Component {
         .then(response => response.json())
         .catch(err => console.warn('fetch error' + err))
         .then(json => {
-          this.setState({dateData: json});
+          this.setState({dateData: json, date: date});
           console.log(json);
         })
         .catch(err => console.warn('json not loaded' + err));
@@ -279,7 +279,8 @@ export default class HomeScreen extends React.Component {
         <View style={styles.fact}>
           <View style={styles.centeredView}>
             <Modal
-              animationType="slide"
+              animationIn="zoomInDown"
+              animationOut="zoomInDown"
               transparent={true}
               visible={modalVisible}
               onRequestClose={() => {
@@ -295,6 +296,7 @@ export default class HomeScreen extends React.Component {
                     loop={modalLoop}
                     enableMergePathsAndroidForKitKatAndAbove
                   />
+
                   <Text style={styles.modalText}>
                     {this.state.dateData.text}
                   </Text>
@@ -308,9 +310,6 @@ export default class HomeScreen extends React.Component {
                 </TouchableHighlight>
               </View>
             </Modal>
-
-            <Text style={[styles.random]}>Welcome to EQWL!</Text>
-
             {this.state.dateData.text ? (
               <TouchableHighlight
                 style={styles.playButton}
@@ -322,7 +321,7 @@ export default class HomeScreen extends React.Component {
                   autoPlay={!progress}
                   source={require('../screens/animations/dateAnimation.json')}
                   progress={progress}
-                  loop={loop}
+                  loop={false}
                   enableMergePathsAndroidForKitKatAndAbove
                 />
               </TouchableHighlight>
@@ -333,11 +332,13 @@ export default class HomeScreen extends React.Component {
                   autoPlay={progress}
                   source={require('../screens/animations/dateAnimation.json')}
                   progress={progress}
-                  loop={loop}
+                  loop={false}
                   enableMergePathsAndroidForKitKatAndAbove
                 />
               </View>
             )}
+            <Text style={[styles.random]}>Welcome to EQWL!</Text>
+
             <Text style={[styles.randomText]}>Calculate for A Fact!</Text>
           </View>
         </View>
@@ -357,13 +358,13 @@ const styles = StyleSheet.create({
   container: {
     //calc
     flex: 1,
-    justifyContent: 'center',
-    // alignItems: 'center',
+    // justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#fff',
     //numbers
     // alignSelf: 'stretch',
     // justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
     // marginTop: 20,
   },
 
@@ -468,15 +469,14 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: 'flex-start',
-    // flexDirection: 'column',
-
+    // // flexDirection: 'column',
     alignItems: 'center',
   },
   modalView: {
     justifyContent: 'flex-start',
 
     // margin: 20,
-    // backgroundColor: 'white',
+    backgroundColor: 'white',
     // borderRadius: 20,
     // padding: 20,
     // alignItems: 'center',
@@ -505,20 +505,31 @@ const styles = StyleSheet.create({
   modalText: {
     flex: 1,
     justifyContent: 'center',
-    marginTop: 130,
+    marginTop: 170,
     alignContent: 'center',
     // marginBottom: 15,
     textAlign: 'center',
+    // fontWeight: 'bold',
 
     fontFamily: 'AvenirNext-UltraLight',
-    fontSize: 18,
-    textShadowColor: 'black',
-    textShadowRadius: 1,
-    padding: 65,
+    fontSize: 20,
+    flexWrap: 'wrap',
+    // textShadowColor: 'black',
+    // textShadowRadius: 2,
+    // padding: 50,
     // borderWidth: 2,
 
-    // borderRadius: 20,
+    borderRadius: 20,
     // lineHeight: 100,
+    marginRight: 40,
+    marginLeft: 40,
+  },
+  date: {
+    backgroundColor: 'black',
+    color: 'red',
+    // flex: 1,
+    // justifyContent: 'center',
+    alignContent: 'center',
   },
 });
 
