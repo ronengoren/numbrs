@@ -48,21 +48,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderTopWidth: 0.5,
     borderColor: '#000000',
-    fontFamily: 'AvenirNext-UltraLight',
+    fontFamily: 'AvenirNext-Regular',
   },
   row: {
     flex: 1,
     flexDirection: 'row',
-    fontFamily: 'AvenirNext-UltraLight',
+    fontFamily: 'AvenirNext-Regular',
   },
   numbers: {
     flex: 3,
-    fontFamily: 'AvenirNext-UltraLight',
+    fontFamily: 'AvenirNext-Regular',
   },
   operations: {
     flex: 1,
     backgroundColor: '#fff',
-    fontFamily: 'AvenirNext-UltraLight',
+    fontFamily: 'AvenirNext-Regular',
   },
 });
 

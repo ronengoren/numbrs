@@ -33,13 +33,13 @@ const styles = StyleSheet.create({
     // fontWeight: '400',
     color: '#000000',
     fontSize: 40,
-    fontFamily: 'AvenirNext-UltraLight',
+    fontFamily: 'AvenirNext-Regular',
   },
   result: {
     textAlign: 'center',
     color: '#fff',
     fontSize: 30,
-    fontFamily: 'AvenirNext-UltraLight',
+    fontFamily: 'AvenirNext-Regular',
   },
 });
 

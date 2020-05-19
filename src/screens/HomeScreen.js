@@ -279,64 +279,110 @@ export default class HomeScreen extends React.Component {
         <View style={styles.fact}>
           <View style={styles.centeredView}>
             <Modal
+              backdropColor="#B4B3DB"
+              backdropOpacity={0.8}
               animationIn="zoomInDown"
-              animationOut="zoomInDown"
-              transparent={true}
+              animationOut="zoomOutUp"
+              animationInTiming={600}
+              animationOutTiming={600}
+              backdropTransitionInTiming={600}
+              backdropTransitionOutTiming={600}
+              backdropColor="#B4B3DB"
+              backdropOpacity={0.8}
+              // animationIn="zoomInDown"
+              // animationOut="zoomInDown"
+              // transparent={true}
               visible={modalVisible}
+              // animationIn="zoomInDown"
               onRequestClose={() => {
-                Alert.alert('Modal has been closed.');
+                console.log('Modal has been closed.');
               }}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <LottieView
+              <View style={styles.modalView}>
+                <View style={styles.content}>
+                  {/* <LottieView
                     ref={this.setAnim}
                     autoPlay={!progress}
                     source={require('../screens/animations/modalAnimation.json')}
                     progress={progress}
                     loop={modalLoop}
                     enableMergePathsAndroidForKitKatAndAbove
-                  />
+                  /> */}
 
                   <Text style={styles.modalText}>
                     {this.state.dateData.text}
                   </Text>
                 </View>
-                <TouchableHighlight
+                <TouchableOpacity
                   style={{...styles.openButton, backgroundColor: '#001A54'}}
                   onPress={() => {
                     this.setModalVisible(!modalVisible);
                   }}>
                   <Text style={styles.textStyle}>Nice!</Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
               </View>
             </Modal>
-            {this.state.dateData.text ? (
-              <TouchableHighlight
-                style={styles.playButton}
-                onPress={() => {
-                  this.setModalVisible(true);
-                }}>
+            <View style={styles.headerIcons}>
+              {this.state.dateData.text ? (
+                <TouchableOpacity
+                  style={styles.playButton}
+                  onPress={() => {
+                    this.setModalVisible(true);
+                  }}>
+                  <LottieView
+                    ref={this.setAnim}
+                    autoPlay={!progress}
+                    source={require('../screens/animations/dateAnimation.json')}
+                    progress={progress}
+                    loop={false}
+                    enableMergePathsAndroidForKitKatAndAbove
+                  />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.playButton}>
+                  <LottieView
+                    ref={this.setAnim}
+                    autoPlay={progress}
+                    source={require('../screens/animations/dateAnimation.json')}
+                    progress={progress}
+                    loop={false}
+                    enableMergePathsAndroidForKitKatAndAbove
+                  />
+                </View>
+              )}
+              <View style={styles.playButtonSecond}>
+                {/* <TouchableOpacity
+                  style={styles.playButtonSecond}
+                  onPress={() => {
+                    this.setModalVisible(true);
+                  }}> */}
                 <LottieView
                   ref={this.setAnim}
                   autoPlay={!progress}
-                  source={require('../screens/animations/dateAnimation.json')}
+                  source={require('../screens/animations/comingSoon.json')}
                   progress={progress}
                   loop={false}
                   enableMergePathsAndroidForKitKatAndAbove
                 />
-              </TouchableHighlight>
-            ) : (
-              <View style={styles.playButton}>
+                {/* </TouchableOpacity> */}
+              </View>
+              <View style={styles.playButtonThird}>
+                {/* <TouchableOpacity
+                  style={styles.playButtonThird}
+                  onPress={() => {
+                    this.setModalVisible(true);
+                  }}> */}
                 <LottieView
                   ref={this.setAnim}
-                  autoPlay={progress}
-                  source={require('../screens/animations/dateAnimation.json')}
+                  autoPlay={!progress}
+                  source={require('../screens/animations/comingSoon.json')}
                   progress={progress}
                   loop={false}
                   enableMergePathsAndroidForKitKatAndAbove
                 />
+                {/* </TouchableOpacity> */}
               </View>
-            )}
+            </View>
+
             <Text style={[styles.random]}>Welcome to EQWL!</Text>
 
             <Text style={[styles.randomText]}>Calculate for A Fact!</Text>
@@ -352,7 +398,7 @@ export default class HomeScreen extends React.Component {
     );
   }
 }
-const PLAY_BUTTON_SIZE = 120;
+const PLAY_BUTTON_SIZE = 80;
 
 const styles = StyleSheet.create({
   container: {
@@ -381,13 +427,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     // alignItems: 'center',
     // height: 0.5,
-    // height: '100%',
-    width: '90%',
+    height: '100%',
+    width: '80%',
     backgroundColor: '#fff',
     color: '#008033',
     borderBottomWidth: 0.5,
     borderColor: '#000000',
-    marginTop: 83,
+    marginTop: 80,
   },
   list: {
     paddingVertical: 4,
@@ -402,10 +448,10 @@ const styles = StyleSheet.create({
     padding: 0,
 
     // margin: 30,
-    marginTop: 10,
+    // marginTop: 10,
 
     color: '#000000',
-    fontFamily: 'AvenirNext-UltraLight',
+    fontFamily: 'AvenirNext-Regular',
     textShadowColor: 'black',
     textShadowRadius: 1,
   },
@@ -414,7 +460,7 @@ const styles = StyleSheet.create({
     fontSize: 21,
 
     color: '#000000',
-    fontFamily: 'AvenirNext-UltraLight',
+    fontFamily: 'AvenirNext-Regular',
     textShadowColor: 'black',
     textShadowRadius: 1,
     padding: 2,
@@ -431,15 +477,45 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
   },
+  headerIcons: {
+    flex: 1,
+    flexDirection: 'row',
+    marginBottom: 80,
+    // padding: 0,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    backgroundColor: 'white',
+    // marginRight: 40,
+  },
   playButton: {
     flex: 1,
     width: PLAY_BUTTON_SIZE,
     height: PLAY_BUTTON_SIZE,
     borderRadius: PLAY_BUTTON_SIZE / 2,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'stretch',
-    paddingTop: 70,
+    // marginRight: -60,
+    // padding: -140,
+    // backgroundColor: 'pink',
+
+    // marginTop: 10,
+    // marginRight: 240,
+  },
+  playButtonSecond: {
+    flex: 1,
+    width: PLAY_BUTTON_SIZE,
+    height: PLAY_BUTTON_SIZE,
+    borderRadius: PLAY_BUTTON_SIZE / 2,
+    // backgroundColor: '#fff',
+
+    // marginTop: 10,
+  },
+  playButtonThird: {
+    flex: 1,
+    width: PLAY_BUTTON_SIZE,
+    height: PLAY_BUTTON_SIZE,
+    borderRadius: PLAY_BUTTON_SIZE / 2,
+    // backgroundColor: '#fff',
+
+    // marginTop: 10,
   },
   playButtonIcon: {
     width: 16,
@@ -468,28 +544,38 @@ const styles = StyleSheet.create({
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     // // flexDirection: 'column',
     alignItems: 'center',
   },
   modalView: {
-    justifyContent: 'flex-start',
-
-    // margin: 20,
-    backgroundColor: 'white',
-    // borderRadius: 20,
+    flex: 1,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    margin: 20,
+    marginTop: 80,
+    // backgroundColor: 'white',
+    borderRadius: 20,
     // padding: 20,
     // alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    height: 390,
-    width: 100 + '%',
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
+    // height: 390,
+    // width: 100 + '%',
+  },
+  content: {
+    backgroundColor: 'white',
+    padding: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
   },
   openButton: {
     backgroundColor: '#001A54',
@@ -499,30 +585,30 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     color: '#DDE6EF',
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     textAlign: 'center',
   },
   modalText: {
-    flex: 1,
-    justifyContent: 'center',
-    marginTop: 170,
-    alignContent: 'center',
-    // marginBottom: 15,
-    textAlign: 'center',
-    // fontWeight: 'bold',
-
-    fontFamily: 'AvenirNext-UltraLight',
     fontSize: 20,
-    flexWrap: 'wrap',
-    // textShadowColor: 'black',
-    // textShadowRadius: 2,
-    // padding: 50,
-    // borderWidth: 2,
-
-    borderRadius: 20,
-    // lineHeight: 100,
-    marginRight: 40,
-    marginLeft: 40,
+    marginBottom: 12,
+    // flex: 1,
+    // justifyContent: 'center',
+    marginTop: 170,
+    // alignContent: 'center',
+    // // marginBottom: 15,
+    // textAlign: 'center',
+    // // fontWeight: 'bold',
+    fontFamily: 'AvenirNext-Regular',
+    // fontSize: 20,
+    // flexWrap: 'wrap',
+    // // textShadowColor: 'black',
+    // // textShadowRadius: 2,
+    // // padding: 50,
+    // // borderWidth: 2,
+    // borderRadius: 20,
+    // // lineHeight: 100,
+    // marginRight: 40,
+    // marginLeft: 40,
   },
   date: {
     backgroundColor: 'black',

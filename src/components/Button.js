@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#000000',
     fontSize: 30,
-    fontFamily: 'AvenirNext-UltraLight',
+    fontFamily: 'AvenirNext-Regular',
   },
 });
 
