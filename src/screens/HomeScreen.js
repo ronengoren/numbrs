@@ -27,6 +27,7 @@ const playIcon = require('../../assets/play.png');
 const pauseIcon = require('../../assets/pause.png');
 const loopIcon = require('../../assets/loop.png');
 const inverseIcon = require('../../assets/inverse.png');
+const eqwlIcon = require('../../assets/icon.png');
 
 const makeExample = (name, getJson, width) => ({name, getJson, width});
 const EXAMPLES = [
@@ -250,7 +251,7 @@ export default class HomeScreen extends React.Component {
         <View style={styles.container} accessible={true}>
           <View style={styles.fact}>
             {this.state.trivia ? (
-              <Text style={[styles.random]} adjustsFontSizeToFit>
+              <Text style={[styles.randomText]} adjustsFontSizeToFit>
                 {this.state.trivia}
               </Text>
             ) : (
@@ -279,113 +280,106 @@ export default class HomeScreen extends React.Component {
         <View style={styles.fact}>
           <View style={styles.centeredView}>
             <Modal
-              backdropColor="#B4B3DB"
-              backdropOpacity={0.8}
+              animationInTiming={1000}
+              animationOutTiming={1000}
+              backdropTransitionInTiming={800}
+              backdropTransitionOutTiming={800}
+              // backdropColor="#B4B3DB"
+              // backdropOpacity={0.8}
+              // backdropColor="#B4B3DB"
+              // backdropOpacity={0.8}
               animationIn="zoomInDown"
               animationOut="zoomOutUp"
-              animationInTiming={600}
-              animationOutTiming={600}
-              backdropTransitionInTiming={600}
-              backdropTransitionOutTiming={600}
-              backdropColor="#B4B3DB"
-              backdropOpacity={0.8}
+              // animationInTiming={600}
+              // animationOutTiming={600}
+              // backdropTransitionInTiming={600}
+              // backdropTransitionOutTiming={600}
+              // backdropColor="#B4B3DB"
+              // backdropOpacity={0.8}
               // animationIn="zoomInDown"
               // animationOut="zoomInDown"
-              // transparent={true}
-              visible={modalVisible}
+              isVisible={modalVisible}
               // animationIn="zoomInDown"
               onRequestClose={() => {
                 console.log('Modal has been closed.');
               }}>
-              <View style={styles.modalView}>
-                <View style={styles.content}>
-                  {/* <LottieView
-                    ref={this.setAnim}
-                    autoPlay={!progress}
-                    source={require('../screens/animations/modalAnimation.json')}
-                    progress={progress}
-                    loop={modalLoop}
-                    enableMergePathsAndroidForKitKatAndAbove
-                  /> */}
-
-                  <Text style={styles.modalText}>
-                    {this.state.dateData.text}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  style={{...styles.openButton, backgroundColor: '#001A54'}}
-                  onPress={() => {
-                    this.setModalVisible(!modalVisible);
-                  }}>
-                  <Text style={styles.textStyle}>Nice!</Text>
-                </TouchableOpacity>
+              <View style={styles.content}>
+                <Text style={styles.modalText}>{this.state.dateData.text}</Text>
               </View>
+              <TouchableOpacity
+                style={{...styles.openButton, backgroundColor: 'black'}}
+                onPress={() => {
+                  this.setModalVisible(!modalVisible);
+                }}>
+                <Text style={styles.textStyle}>Nice!</Text>
+              </TouchableOpacity>
             </Modal>
-            <View style={styles.headerIcons}>
-              {this.state.dateData.text ? (
-                <TouchableOpacity
-                  style={styles.playButton}
-                  onPress={() => {
-                    this.setModalVisible(true);
-                  }}>
-                  <LottieView
-                    ref={this.setAnim}
-                    autoPlay={!progress}
-                    source={require('../screens/animations/dateAnimation.json')}
-                    progress={progress}
-                    loop={false}
-                    enableMergePathsAndroidForKitKatAndAbove
-                  />
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.playButton}>
-                  <LottieView
-                    ref={this.setAnim}
-                    autoPlay={progress}
-                    source={require('../screens/animations/dateAnimation.json')}
-                    progress={progress}
-                    loop={false}
-                    enableMergePathsAndroidForKitKatAndAbove
-                  />
-                </View>
-              )}
-              <View style={styles.playButtonSecond}>
-                {/* <TouchableOpacity
+            <Text style={[styles.random]}>EQWL</Text>
+          </View>
+
+          <View style={styles.headerIcons}>
+            {this.state.dateData.text ? (
+              <TouchableOpacity
+                style={styles.playButton}
+                onPress={() => {
+                  this.setModalVisible(true);
+                }}>
+                <LottieView
+                  ref={this.setAnim}
+                  autoPlay={!progress}
+                  source={require('../screens/animations/dateAnimation.json')}
+                  progress={progress}
+                  loop={false}
+                  enableMergePathsAndroidForKitKatAndAbove
+                />
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.playButton}>
+                <LottieView
+                  ref={this.setAnim}
+                  autoPlay={progress}
+                  source={require('../screens/animations/dateAnimation.json')}
+                  progress={progress}
+                  loop={false}
+                  enableMergePathsAndroidForKitKatAndAbove
+                />
+              </View>
+            )}
+
+            <View style={styles.playButtonSecond}>
+              {/* <TouchableOpacity
                   style={styles.playButtonSecond}
                   onPress={() => {
                     this.setModalVisible(true);
                   }}> */}
-                <LottieView
-                  ref={this.setAnim}
-                  autoPlay={!progress}
-                  source={require('../screens/animations/comingSoon.json')}
-                  progress={progress}
-                  loop={false}
-                  enableMergePathsAndroidForKitKatAndAbove
-                />
-                {/* </TouchableOpacity> */}
-              </View>
-              <View style={styles.playButtonThird}>
-                {/* <TouchableOpacity
+
+              <LottieView
+                ref={this.setAnim}
+                autoPlay={!progress}
+                source={require('../screens/animations/comingSoon.json')}
+                progress={progress}
+                loop={false}
+                enableMergePathsAndroidForKitKatAndAbove
+              />
+              {/* </TouchableOpacity> */}
+            </View>
+
+            <View style={styles.playButtonThird}>
+              {/* <TouchableOpacity
                   style={styles.playButtonThird}
                   onPress={() => {
                     this.setModalVisible(true);
                   }}> */}
-                <LottieView
-                  ref={this.setAnim}
-                  autoPlay={!progress}
-                  source={require('../screens/animations/comingSoon.json')}
-                  progress={progress}
-                  loop={false}
-                  enableMergePathsAndroidForKitKatAndAbove
-                />
-                {/* </TouchableOpacity> */}
-              </View>
+              <LottieView
+                ref={this.setAnim}
+                autoPlay={true}
+                source={require('../screens/animations/comingSoon.json')}
+                progress={progress}
+                loop={false}
+                enableMergePathsAndroidForKitKatAndAbove
+              />
+              {/* </TouchableOpacity> */}
             </View>
-
-            <Text style={[styles.random]}>Welcome to EQWL!</Text>
-
-            <Text style={[styles.randomText]}>Calculate for A Fact!</Text>
           </View>
         </View>
 
@@ -435,34 +429,29 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     marginTop: 80,
   },
-  list: {
-    paddingVertical: 4,
-    margin: 5,
-    backgroundColor: '#000000',
-  },
+
   random: {
     flex: 1,
-    fontSize: 25,
+    fontSize: 40,
     textAlign: 'center',
     justifyContent: 'center',
     padding: 0,
+    marginBottom: 0,
 
     // margin: 30,
     // marginTop: 10,
 
-    color: '#000000',
+    color: 'black',
     fontFamily: 'AvenirNext-Regular',
-    textShadowColor: 'black',
-    textShadowRadius: 1,
   },
   randomText: {
     flex: 1,
     fontSize: 21,
-
+    textAlign: 'center',
+    justifyContent: 'center',
     color: '#000000',
     fontFamily: 'AvenirNext-Regular',
-    textShadowColor: 'black',
-    textShadowRadius: 1,
+
     padding: 2,
   },
 
@@ -544,56 +533,45 @@ const styles = StyleSheet.create({
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    // // flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  modalView: {
-    flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    margin: 20,
-    marginTop: 80,
-    // backgroundColor: 'white',
-    borderRadius: 20,
-    // padding: 20,
-    // alignItems: 'center',
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-    // elevation: 5,
-    // height: 390,
-    // width: 100 + '%',
-  },
+  modalView: {},
   content: {
-    backgroundColor: 'white',
+    fontSize: 20,
     padding: 22,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,
     borderColor: 'rgba(0, 0, 0, 0.1)',
+
+    // marginBottom: 12,
+    backgroundColor: 'white',
+    // padding: 22,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // borderRadius: 4,
+    // borderColor: 'rgba(0, 0, 0, 0.1)',
   },
   openButton: {
-    backgroundColor: '#001A54',
+    backgroundColor: 'white',
     borderRadius: 20,
     padding: 10,
     elevation: 2,
   },
   textStyle: {
-    color: '#DDE6EF',
+    color: 'white',
     // fontWeight: 'bold',
     textAlign: 'center',
   },
   modalText: {
-    fontSize: 20,
     marginBottom: 12,
+
+    fontSize: 20,
+    // marginBottom: 12,
     // flex: 1,
     // justifyContent: 'center',
-    marginTop: 170,
+    // marginTop: 170,
     // alignContent: 'center',
     // // marginBottom: 15,
     // textAlign: 'center',
@@ -604,7 +582,7 @@ const styles = StyleSheet.create({
     // // textShadowColor: 'black',
     // // textShadowRadius: 2,
     // // padding: 50,
-    // // borderWidth: 2,
+    // borderWidth: 2,
     // borderRadius: 20,
     // // lineHeight: 100,
     // marginRight: 40,
