@@ -372,7 +372,7 @@ export default class HomeScreen extends React.Component {
                   }}> */}
               <LottieView
                 ref={this.setAnim}
-                autoPlay={true}
+                autoPlay={!progress}
                 source={require('../screens/animations/comingSoon.json')}
                 progress={progress}
                 loop={false}
@@ -432,11 +432,11 @@ const styles = StyleSheet.create({
 
   random: {
     flex: 1,
-    fontSize: 40,
+    fontSize: 30,
     textAlign: 'center',
     justifyContent: 'center',
     padding: 0,
-    marginBottom: 0,
+    marginBottom: 20,
 
     // margin: 30,
     // marginTop: 10,
