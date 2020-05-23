@@ -14,7 +14,7 @@ class Buttons extends Component {
       ['7', '8', '9'],
       ['4', '5', '6'],
       ['1', '2', '3'],
-      [',', '0', '='],
+      ['0', '.', '='],
     ];
     const operations = ['C', '÷', '×', '-', '+'];
     return (
@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     flex: 2,
     flexDirection: 'row',
     borderTopWidth: 0.5,
+
     borderColor: '#000000',
     fontFamily: 'AvenirNext-Regular',
   },
@@ -63,6 +64,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     fontFamily: 'AvenirNext-Regular',
+    borderLeftWidth: 0.5,
+    borderColor: 'black',
   },
 });
 

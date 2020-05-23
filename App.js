@@ -4,6 +4,7 @@ import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from './src/screens/HomeScreen';
 import {NavigationContainer} from '@react-navigation/native';
+import Home from './src/screens/Home';
 
 const Stack = createStackNavigator();
 
@@ -13,7 +14,7 @@ function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
           name="Home"
-          component={HomeScreen}
+          component={Home}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

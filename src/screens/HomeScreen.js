@@ -70,8 +70,8 @@ export default class HomeScreen extends React.Component {
       display: '',
       result: '',
       data: {},
-      date: 9,
-      month: 10,
+      date: '',
+      month: '',
       trivia: '',
       toggled: false,
       loader: false,
@@ -179,7 +179,7 @@ export default class HomeScreen extends React.Component {
       if (!this.state.result) {
         this.setState({
           display: this.state.result,
-          result: '',
+          result: 0,
           loader: false,
         });
       }
@@ -265,16 +265,9 @@ export default class HomeScreen extends React.Component {
               />
             )}
           </View>
-
-          <StatusBar barStyle="light-content" />
-
-          <Display state={this.state} />
-
-          <Buttons operation={this.handleOperation} />
         </View>
       );
     }
-    // this.state.dateData.text
     return (
       <View style={styles.container}>
         <View style={styles.fact}>
@@ -284,22 +277,9 @@ export default class HomeScreen extends React.Component {
               animationOutTiming={1000}
               backdropTransitionInTiming={800}
               backdropTransitionOutTiming={800}
-              // backdropColor="#B4B3DB"
-              // backdropOpacity={0.8}
-              // backdropColor="#B4B3DB"
-              // backdropOpacity={0.8}
               animationIn="zoomInDown"
               animationOut="zoomOutUp"
-              // animationInTiming={600}
-              // animationOutTiming={600}
-              // backdropTransitionInTiming={600}
-              // backdropTransitionOutTiming={600}
-              // backdropColor="#B4B3DB"
-              // backdropOpacity={0.8}
-              // animationIn="zoomInDown"
-              // animationOut="zoomInDown"
               isVisible={modalVisible}
-              // animationIn="zoomInDown"
               onRequestClose={() => {
                 console.log('Modal has been closed.');
               }}>
@@ -383,11 +363,11 @@ export default class HomeScreen extends React.Component {
           </View>
         </View>
 
-        <StatusBar barStyle="light-content" />
+        {/* <StatusBar barStyle="light-content" />
 
         <Display state={this.state} />
 
-        <Buttons operation={this.handleOperation} />
+        <Buttons operation={this.handleOperation} /> */}
       </View>
     );
   }
