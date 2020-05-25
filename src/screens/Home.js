@@ -10,6 +10,7 @@ import {
   Clipboard,
   Dimensions,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import LottieView from 'lottie-react-native';
@@ -24,6 +25,7 @@ import LayoutBuilder from '../utils/LayoutBuilder';
 import {isNumeric} from '../utils/Utils';
 
 import Toast, {DURATION} from 'react-native-easy-toast';
+const DeviceWidth = Dimensions.get('window').width;
 
 const eqwlIcon = require('../../assets/icon.png');
 const makeExample = (name, getJson, width) => ({name, getJson, width});
@@ -66,11 +68,17 @@ export default class Home extends Component<Props, State> {
       date: '',
       month: '',
       trivia: '',
+      quize: '',
       toggled: false,
       loader: false,
       dateData: {},
+      quizeData: '',
+      firstRandomQuize: '',
+      secondRandomQuize: '',
+      thirdRandomQuize: '',
       dateIcon: false,
       modalVisible: false,
+      quizeModalVisible: false,
       modalLoop: false,
     };
     state = {
@@ -108,6 +116,7 @@ export default class Home extends Component<Props, State> {
     this.setState({
       loader: false,
       trivia: '',
+      quizeData: false,
     });
   }
 
@@ -169,14 +178,16 @@ export default class Home extends Component<Props, State> {
   updateDisplay(button) {
     const newTopDisplay = this.props.brain.getDisplay();
     const newBottomDisplay = this.props.brain.getResult();
+
     if (button === '=') {
       console.log(button);
       this.getTrivia(newTopDisplay);
+      this.quizeToState(newTopDisplay);
+
       this.setState({
-        loader: true,
+        loader: false,
       });
     }
-
     this.setState({
       topDisplay: newTopDisplay,
       bottomDisplay: newBottomDisplay,
@@ -193,6 +204,7 @@ export default class Home extends Component<Props, State> {
       console.log(response);
     }
   };
+
   resToState() {
     const date = new Date();
     const day = date.getDate();
@@ -211,8 +223,33 @@ export default class Home extends Component<Props, State> {
         .catch(err => console.warn('json not loaded' + err));
     }
   }
+  quizeToState(number) {
+    console.log('number' + number);
+    const RandomNumber = Math.floor(Math.random() * 100) + 1;
+    console.log('RandomNumber' + RandomNumber);
+
+    const date = new Date();
+    const day = date.getDate();
+    const month = date.getUTCMonth() + 1;
+    let url;
+    let triviaNumberUrl;
+    url = `http://numbersapi.com/${number}/trivia`;
+    if (url) {
+      fetch(url)
+        .then(response => response.text())
+        .catch(err => console.warn('fetch error' + err))
+        .then(text => {
+          this.setState({quizeData: text});
+          console.log(text);
+        })
+        .catch(err => console.warn('json not loaded' + err));
+    }
+  }
   setModalVisible = visible => {
     this.setState({modalVisible: visible});
+  };
+  setQuizeModalVisible = visible => {
+    this.setState({quizeModalVisible: visible});
   };
   render() {
     const buttonContainer = LayoutBuilder.buildButtonContainer(
@@ -234,6 +271,7 @@ export default class Home extends Component<Props, State> {
       loop,
       example,
       modalVisible,
+      quizeModalVisible,
       modalLoop,
     } = this.state;
     if (this.state.loader) {
@@ -241,9 +279,21 @@ export default class Home extends Component<Props, State> {
         <View style={styles.container} accessible={true}>
           <View style={styles.fact}>
             {this.state.trivia ? (
-              <Text style={[styles.randomText]} adjustsFontSizeToFit>
-                {this.state.trivia}
-              </Text>
+              <View style={styles.randomEqwl}>
+                <View style={styles.centeredView}>
+                  <LottieView
+                    ref={this.setAnim}
+                    autoPlay={!progress}
+                    source={require('../screens/animations/starSuccess.json')}
+                    progress={progress}
+                    loop={false}
+                    enableMergePathsAndroidForKitKatAndAbove
+                  />
+                </View>
+                <Text style={[styles.randomText]} adjustsFontSizeToFit>
+                  {this.state.trivia}
+                </Text>
+              </View>
             ) : (
               <LottieView
                 ref={this.setAnim}
@@ -272,6 +322,7 @@ export default class Home extends Component<Props, State> {
         <Toast ref="toast" position="top" opacity={0.8} />
         <View style={styles.fact}>
           <View style={styles.centeredView}>
+            {/* date modal */}
             <Modal
               animationInTiming={1000}
               animationOutTiming={1000}
@@ -286,13 +337,76 @@ export default class Home extends Component<Props, State> {
               <View style={styles.content}>
                 <Text style={styles.modalText}>{this.state.dateData.text}</Text>
               </View>
-              <TouchableOpacity
-                style={{...styles.openButton, backgroundColor: 'black'}}
-                onPress={() => {
-                  this.setModalVisible(!modalVisible);
-                }}>
-                <Text style={styles.textStyle}>Nice!</Text>
-              </TouchableOpacity>
+              <View style={styles.buttonsModal}>
+                <TouchableOpacity
+                  style={{...styles.openButton, backgroundColor: 'black'}}
+                  onPress={() => {
+                    this.setModalVisible(!modalVisible);
+                  }}>
+                  <Text style={styles.textStyle}>Tomorrow</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{...styles.openButton, backgroundColor: 'black'}}
+                  onPress={() => {
+                    this.setModalVisible(!modalVisible);
+                  }}>
+                  <Text style={styles.textStyle}>Explore</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{...styles.openButton, backgroundColor: 'black'}}
+                  onPress={() => {
+                    this.setModalVisible(!modalVisible);
+                  }}>
+                  <Text style={styles.textStyle}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </Modal>
+            {/* quize modal */}
+            <Modal
+              animationInTiming={1000}
+              animationOutTiming={1000}
+              backdropTransitionInTiming={800}
+              backdropTransitionOutTiming={800}
+              animationIn="zoomInDown"
+              animationOut="zoomOutUp"
+              isVisible={quizeModalVisible}
+              onRequestClose={() => {
+                console.log('Modal has been closed.');
+              }}>
+              <View style={styles.quizeContainer}>
+                <View>
+                  <TouchableOpacity
+                    style={styles.twoTopQuize}
+                    onPress={() => {
+                      this.setQuizeModalVisible(!quizeModalVisible);
+                    }}>
+                    <Text style={styles.textStyle}>{this.state.quizeData}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.twoTopQuize}
+                    onPress={() => {
+                      this.setQuizeModalVisible(!quizeModalVisible);
+                    }}>
+                    <Text style={styles.textStyle}>{this.state.quizeData}</Text>
+                  </TouchableOpacity>
+                </View>
+                <View>
+                  <TouchableOpacity
+                    style={styles.twoTopQuize}
+                    onPress={() => {
+                      this.setQuizeModalVisible(!quizeModalVisible);
+                    }}>
+                    <Text style={styles.textStyle}>{this.state.quizeData}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.twoTopQuize}
+                    onPress={() => {
+                      this.setQuizeModalVisible(!quizeModalVisible);
+                    }}>
+                    <Text style={styles.textStyle}>{this.state.quizeData}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </Modal>
             <Text style={[styles.random]}>EQWL</Text>
           </View>
@@ -334,13 +448,50 @@ export default class Home extends Component<Props, State> {
                   />
                 </View>
               )}
-              <View style={styles.playButtonSecond}>
-                {/* <TouchableOpacity
+              {this.state.quizeData ? (
+                <TouchableOpacity
                   style={styles.playButtonSecond}
                   onPress={() => {
-                    this.setModalVisible(true);
-                  }}> */}
-
+                    this.setQuizeModalVisible(true);
+                  }}>
+                  <LottieView
+                    ref={this.setAnim}
+                    autoPlay={!progress}
+                    source={require('../screens/animations/dateAnimation.json')}
+                    progress={progress}
+                    loop={false}
+                    enableMergePathsAndroidForKitKatAndAbove
+                  />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.playButtonSecond}>
+                  <LottieView
+                    ref={this.setAnim}
+                    autoPlay={progress}
+                    source={require('../screens/animations/dateAnimation.json')}
+                    progress={progress}
+                    loop={false}
+                    enableMergePathsAndroidForKitKatAndAbove
+                  />
+                </View>
+              )}
+              {/* {this.state.dateData.text ? (
+                <TouchableOpacity
+                  style={styles.playButtonThird}
+                  onPress={() => {
+                    this.setQuizeModalVisible(true);
+                  }}>
+                  <LottieView
+                    ref={this.setAnim}
+                    autoPlay={!progress}
+                    source={require('../screens/animations/dateAnimation.json')}
+                    progress={progress}
+                    loop={false}
+                    enableMergePathsAndroidForKitKatAndAbove
+                  />
+                </TouchableOpacity>
+              ) : ( */}
+              <View style={styles.playButtonThird}>
                 <LottieView
                   ref={this.setAnim}
                   autoPlay={!progress}
@@ -349,25 +500,8 @@ export default class Home extends Component<Props, State> {
                   loop={false}
                   enableMergePathsAndroidForKitKatAndAbove
                 />
-                {/* </TouchableOpacity> */}
               </View>
-
-              <View style={styles.playButtonThird}>
-                {/* <TouchableOpacity
-                  style={styles.playButtonThird}
-                  onPress={() => {
-                    this.setModalVisible(true);
-                  }}> */}
-                <LottieView
-                  ref={this.setAnim}
-                  autoPlay={true}
-                  source={require('../screens/animations/comingSoon.json')}
-                  progress={progress}
-                  loop={false}
-                  enableMergePathsAndroidForKitKatAndAbove
-                />
-                {/* </TouchableOpacity> */}
-              </View>
+              {/* )} */}
             </View>
           )}
         </View>
@@ -401,6 +535,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   fact: {
+    marginTop: 25,
+    flex: 1,
+    justifyContent: 'center',
+
+    height: '100%',
+    width: '100%',
+    backgroundColor: '#fff',
+    color: '#008033',
+    borderBottomWidth: 0.5,
+    borderColor: '#000000',
+  },
+  eqwlFact: {
     marginTop: 45,
     flex: 0.7,
     justifyContent: 'center',
@@ -409,7 +555,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     color: '#008033',
-    borderBottomWidth: 0.5,
+    // borderBottomWidth: 0.5,
     borderColor: '#000000',
   },
   centeredView: {
@@ -429,15 +575,30 @@ const styles = StyleSheet.create({
     color: 'black',
     fontFamily: 'AvenirNext-Regular',
   },
+  randomEqwl: {
+    flex: 1,
+    fontSize: 40,
+    textAlign: 'center',
+    justifyContent: 'center',
+    padding: 0,
+    marginBottom: 0,
+    marginTop: 10,
+    marginRight: 20,
+    marginLeft: 20,
+    height: '100%',
+
+    color: 'black',
+    fontFamily: 'AvenirNext-Regular',
+  },
   randomText: {
-    margin: 20,
-    flex: 0.7,
+    margin: 0,
+    flex: 1,
     fontSize: 21,
     textAlign: 'center',
     justifyContent: 'center',
     color: '#000000',
     fontFamily: 'AvenirNext-Regular',
-    // marginTop: 40,
+    // marginBottom: 40,
 
     padding: 2,
   },
@@ -492,11 +653,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 5,
   },
-  centeredView: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+
   modalView: {},
   content: {
     fontSize: 20,
@@ -508,6 +665,11 @@ const styles = StyleSheet.create({
 
     backgroundColor: 'white',
   },
+  buttonsModal: {
+    // flex: 1,
+    // flexDirection: 'row',
+    // backgroundColor: 'pink',
+  },
   openButton: {
     backgroundColor: 'white',
     borderRadius: 20,
@@ -515,8 +677,14 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   textStyle: {
+    // justifyContent: 'space-around',
+    // alignItems: 'center',
     color: 'white',
     textAlign: 'center',
+    fontSize: 15,
+    // backgroundColor: 'white',
+    fontFamily: 'AvenirNext-Regular',
+    margin: 5,
   },
   modalText: {
     marginBottom: 12,
@@ -529,5 +697,31 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     color: 'red',
     alignContent: 'center',
+  },
+  quizeContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  twoBottomQuize: {
+    width: DeviceWidth * 0.3,
+    height: DeviceWidth * 0.4,
+    marginBottom: 1,
+    marginLeft: 1,
+    // backgroundColor: 'yellow',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  twoTopQuize: {
+    width: DeviceWidth * 0.4,
+    height: DeviceWidth * 0.4,
+    margin: 5,
+    backgroundColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // textAlign: 'center',
+    // alignContent: 'center',
   },
 });
