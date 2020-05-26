@@ -23,6 +23,7 @@ import Colors from '../constants/Colors';
 import Constants from '../constants/Constants';
 import LayoutBuilder from '../utils/LayoutBuilder';
 import {isNumeric} from '../utils/Utils';
+import Quiz from './Quiz';
 
 import Toast, {DURATION} from 'react-native-easy-toast';
 const DeviceWidth = Dimensions.get('window').width;
@@ -59,28 +60,22 @@ export default class Home extends Component<Props, State> {
 
   constructor(props) {
     super(props);
-    this.state = {
-      loading: false,
-      dataSource: [],
-      display: '',
-      result: '',
-      data: {},
-      date: '',
-      month: '',
-      trivia: '',
-      quize: '',
-      toggled: false,
-      loader: false,
-      dateData: {},
-      quizeData: '',
-      firstRandomQuize: '',
-      secondRandomQuize: '',
-      thirdRandomQuize: '',
-      dateIcon: false,
-      modalVisible: false,
-      quizeModalVisible: false,
-      modalLoop: false,
-    };
+    (this.array = []),
+      (this.state = {
+        display: '',
+        data: {},
+        date: '',
+        month: '',
+        trivia: '',
+        loader: false,
+        dateData: {},
+        quizeData: [],
+        quize4Data: false,
+        numberEqwl: '',
+        modalVisible: false,
+        quizeModalVisible: false,
+        modalLoop: false,
+      });
     state = {
       example: EXAMPLES[0],
       duration: 3000,
@@ -97,6 +92,8 @@ export default class Home extends Component<Props, State> {
   componentDidMount() {
     this._updateOrientation();
     this.resToState();
+
+    // this.randomNumber();
   }
 
   _updateOrientation() {
@@ -112,11 +109,13 @@ export default class Home extends Component<Props, State> {
 
   _reset() {
     this.props.brain.clear();
+    this.array.splice(0, this.array.length);
+    // this.randomNumber();
     this.updateDisplay();
     this.setState({
       loader: false,
       trivia: '',
-      quizeData: false,
+      quize4Data: false,
     });
   }
 
@@ -180,12 +179,13 @@ export default class Home extends Component<Props, State> {
     const newBottomDisplay = this.props.brain.getResult();
 
     if (button === '=') {
-      console.log(button);
+      // console.log(button);
       this.getTrivia(newTopDisplay);
       this.quizeToState(newTopDisplay);
 
       this.setState({
         loader: false,
+        numberEqwl: newTopDisplay,
       });
     }
     this.setState({
@@ -195,13 +195,18 @@ export default class Home extends Component<Props, State> {
   }
   getTrivia = async number => {
     const round = Math.round(number);
-    const response = await fetch(`http://numbersapi.com/${round}/trivia`);
+    const response = await fetch(
+      `http://numbersapi.com/${round}/trivia?fragment`,
+    );
     const data = await response.text();
     if (response.status !== 200) {
       this.setState({trivia: 'We couldn’t find a fact for this number YET :('});
     } else {
-      this.setState({trivia: data});
-      console.log(response);
+      this.array.push(data);
+
+      console.log(this.array);
+
+      this.setState({trivia: data, quize4Data: true});
     }
   };
 
@@ -223,32 +228,50 @@ export default class Home extends Component<Props, State> {
         .catch(err => console.warn('json not loaded' + err));
     }
   }
-  quizeToState(number) {
-    console.log('number' + number);
-    const RandomNumber = Math.floor(Math.random() * 100) + 1;
-    console.log('RandomNumber' + RandomNumber);
 
-    const date = new Date();
-    const day = date.getDate();
-    const month = date.getUTCMonth() + 1;
+  randomNumber() {
+    const randomNumber = [];
+    for (let index = 0; index < 3; index++) {
+      this.array.push(Math.floor(Math.random() * 100) + 1);
+    }
+    console.log(this.array);
+
+    // this.array.push({title : this.state.textInput_Holder});
+  }
+
+  quizeToState() {
+    // this.array.push(number);
+    // const quizeStrings = this.array.toString();
+    // console.log(quizeStrings);
+
     let url;
-    let triviaNumberUrl;
-    url = `http://numbersapi.com/${number}/trivia`;
-    if (url) {
-      fetch(url)
-        .then(response => response.text())
-        .catch(err => console.warn('fetch error' + err))
-        .then(text => {
-          this.setState({quizeData: text});
-          console.log(text);
-        })
-        .catch(err => console.warn('json not loaded' + err));
+    url = `http://numbersapi.com/random/trivia?fragment`;
+    let i = 3;
+    while (i) {
+      if (url) {
+        fetch(url)
+          .then(response => response.text())
+          .catch(err => console.warn('fetch error' + err))
+          .then(json => {
+            this.array.push(json);
+
+            // this.setState({quizeData: json});
+
+            console.log('quizeData');
+            console.log(this.array);
+          })
+          .catch(err => console.warn('json not loaded' + err));
+      }
+      i--;
     }
   }
   setModalVisible = visible => {
     this.setState({modalVisible: visible});
   };
   setQuizeModalVisible = visible => {
+    this.array.sort(function(a, b) {
+      return 0.5 - Math.random();
+    });
     this.setState({quizeModalVisible: visible});
   };
   render() {
@@ -273,6 +296,7 @@ export default class Home extends Component<Props, State> {
       modalVisible,
       quizeModalVisible,
       modalLoop,
+      numberEqwl,
     } = this.state;
     if (this.state.loader) {
       return (
@@ -373,42 +397,32 @@ export default class Home extends Component<Props, State> {
               onRequestClose={() => {
                 console.log('Modal has been closed.');
               }}>
+              <Text style={styles.textStyleHeaderQuiz}>
+                Number {this.state.numberEqwl} is...
+              </Text>
+
               <View style={styles.quizeContainer}>
-                <View>
-                  <TouchableOpacity
-                    style={styles.twoTopQuize}
-                    onPress={() => {
-                      this.setQuizeModalVisible(!quizeModalVisible);
-                    }}>
-                    <Text style={styles.textStyle}>{this.state.quizeData}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.twoTopQuize}
-                    onPress={() => {
-                      this.setQuizeModalVisible(!quizeModalVisible);
-                    }}>
-                    <Text style={styles.textStyle}>{this.state.quizeData}</Text>
-                  </TouchableOpacity>
-                </View>
-                <View>
-                  <TouchableOpacity
-                    style={styles.twoTopQuize}
-                    onPress={() => {
-                      this.setQuizeModalVisible(!quizeModalVisible);
-                    }}>
-                    <Text style={styles.textStyle}>{this.state.quizeData}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.twoTopQuize}
-                    onPress={() => {
-                      this.setQuizeModalVisible(!quizeModalVisible);
-                    }}>
-                    <Text style={styles.textStyle}>{this.state.quizeData}</Text>
-                  </TouchableOpacity>
-                </View>
+                {/* <Quiz /> */}
+                <FlatList
+                  data={this.array}
+                  renderItem={({item}) => (
+                    <View>
+                      <TouchableOpacity
+                        style={styles.twoTopQuize}
+                        onPress={() => {
+                          this.setQuizeModalVisible(!quizeModalVisible);
+                        }}>
+                        <Text style={styles.textStyle}>{item}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  scrollEnabled={false}
+                  numColumns={2}
+                  keyExtractor={(item, index) => index.toString()}
+                />
               </View>
             </Modal>
-            <Text style={[styles.random]}>EQWL</Text>
+            {/* <Text style={[styles.random]}>EQWL</Text> */}
           </View>
           {this.state.loader ? (
             <LottieView
@@ -448,7 +462,7 @@ export default class Home extends Component<Props, State> {
                   />
                 </View>
               )}
-              {this.state.quizeData ? (
+              {this.state.quize4Data ? (
                 <TouchableOpacity
                   style={styles.playButtonSecond}
                   onPress={() => {
@@ -535,16 +549,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   fact: {
-    marginTop: 25,
-    flex: 1,
+    // marginTop: 25,
+    // flex: 1,
     justifyContent: 'center',
 
-    height: '100%',
+    height: '20%',
     width: '100%',
     backgroundColor: '#fff',
     color: '#008033',
     borderBottomWidth: 0.5,
     borderColor: '#000000',
+    paddingBottom: 40,
   },
   eqwlFact: {
     marginTop: 45,
@@ -591,9 +606,9 @@ const styles = StyleSheet.create({
     fontFamily: 'AvenirNext-Regular',
   },
   randomText: {
-    margin: 0,
+    // marginTop: 10,
     flex: 1,
-    fontSize: 21,
+    fontSize: 18,
     textAlign: 'center',
     justifyContent: 'center',
     color: '#000000',
@@ -606,8 +621,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
 
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'white',
   },
   playButton: {
@@ -686,6 +701,13 @@ const styles = StyleSheet.create({
     fontFamily: 'AvenirNext-Regular',
     margin: 5,
   },
+  textStyleHeaderQuiz: {
+    textAlign: 'center',
+    color: 'white',
+
+    fontFamily: 'AvenirNext-Regular',
+    fontSize: 30,
+  },
   modalText: {
     marginBottom: 12,
 
@@ -699,10 +721,16 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   quizeContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+    // backgroundColor: 'black',
+
+    justifyContent: 'space-between',
     alignItems: 'center',
-    flexDirection: 'row',
+    // alignContent: 'center',
+
+    // flexDirection: 'column',
+    // margin: 5,
   },
   twoBottomQuize: {
     width: DeviceWidth * 0.3,
@@ -721,7 +749,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
-    // textAlign: 'center',
-    // alignContent: 'center',
+    flexDirection: 'row',
+    textAlign: 'center',
+    alignContent: 'center',
+    // borderWidth: 1,
+    // borderColor: 'white',
   },
 });
