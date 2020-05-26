@@ -23,7 +23,7 @@ export default class CalculatorBrain {
     let opToAdd: ?Operation;
     let cleared = false;
     if (op.operationType == OperationType.Equals) {
-      console.log('OperationType.Equals');
+      // console.log('OperationType.Equals');
       opToAdd = this.setEquals(op);
       cleared = true;
     } else if (op.operationType === OperationType.Constant) {

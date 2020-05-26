@@ -5,13 +5,13 @@ import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from './src/screens/HomeScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import Home from './src/screens/Home';
-
+import Quiz from './src/screens/Quiz';
 const Stack = createStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Quiz">
         <Stack.Screen
           name="Home"
           component={Home}

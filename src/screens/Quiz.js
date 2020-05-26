@@ -11,10 +11,6 @@ import {
 import SlidingList from '../components/SlidingList';
 
 export default class Quiz extends Component {
-  static navigationOptions = {
-    title: 'History Quiz',
-  };
-
   state = {
     data: [],
     date: 9,
@@ -22,15 +18,9 @@ export default class Quiz extends Component {
     score: '',
   };
 
-  setScore = score => {
-    this.setState({score});
-    this.setState({data: []});
-    this.resToState();
-  };
-
   resToState() {
-    this.set;
-    const url = `http://numbersapi.com/random/year?json`;
+    // this.set;
+    const url = `http://numbersapi.com/random/trivia?json`;
     let i = 3;
 
     while (i) {
@@ -39,12 +29,12 @@ export default class Quiz extends Component {
           .then(response => response.json())
           .catch(err => console.warn('fetch error' + err))
           .then(json => {
+            console.log(json);
+
             this.setState(prev => {
               const data = prev.data.concat(json);
               return {
                 data: data,
-                date: this.state.date,
-                month: this.state.month,
               };
             });
           })
@@ -58,33 +48,31 @@ export default class Quiz extends Component {
     this.resToState();
   }
 
-  renderQuestion({item}) {
-    const {text} = item;
-    const array = text.split('is the year that');
-    const year = array[0];
-    let newText = array[1].trim();
+  // renderQuestion({item}) {
+  //   const {text} = item;
+  //   const array = text.split('is the year that');
+  //   const year = array[0];
+  //   let newText = array[1].trim();
 
-    if (newText.indexOf('(')) {
-      newText = newText.split('(')[0];
-    }
-    newText = newText.charAt(0).toUpperCase() + newText.substr(1);
+  //   if (newText.indexOf('(')) {
+  //     newText = newText.split('(')[0];
+  //   }
+  //   newText = newText.charAt(0).toUpperCase() + newText.substr(1);
 
-    return <Text style={styles.slider}>{newText}</Text>;
-  }
+  //   return <Text style={styles.slider}>{newText}</Text>;
+  // }
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.header}>
+      <View>
+        {/* <View style={styles.header}>
           <Text style={styles.text}>
             Organize three world events in the right order
           </Text>
           <Text style={styles.text}>{this.state.score}</Text>
-        </View>
+        </View> */}
         {this.state.data ? (
-          <View style={styles.questions}>
-            <SlidingList data={this.state.data} onScoreChange={this.setScore} />
-          </View>
+          <SlidingList data={this.state.data} />
         ) : (
           <ActivityIndicator />
         )}
@@ -95,39 +83,45 @@ export default class Quiz extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+    // backgroundColor: 'black',
+
+    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'white',
+    // alignContent: 'center',
+
+    // flexDirection: 'column',
+    // margin: 5,
   },
-  header: {
-    flex: 1,
-  },
+  // header: {
+  //   flex: 1,
+  // },
   questions: {
-    backgroundColor: '#fff',
-    flex: 5,
+    // backgroundColor: '#fff',
+    // flex: 5,
   },
   footer: {
-    flex: 1,
+    // flex: 1,
   },
   slider: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    backgroundColor: 'white',
-    fontSize: 20,
-    textAlign: 'center',
-    borderRadius: 5,
-    borderColor: 'lightgrey',
-    borderStyle: 'solid',
-    borderWidth: 2,
+    // paddingLeft: 10,
+    // paddingRight: 10,
+    // backgroundColor: 'yellow',
+    // fontSize: 20,
+    // textAlign: 'center',
+    // borderRadius: 5,
+    // borderColor: 'lightgrey',
+    // borderStyle: 'solid',
+    // borderWidth: 2,
   },
   text: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+    // fontSize: 20,
+    // textAlign: 'center',
+    // margin: 10,
   },
   button: {
-    backgroundColor: '#fff',
-    color: 'black',
+    // backgroundColor: '#fff',
+    // color: 'black',
   },
 });
