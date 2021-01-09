@@ -21,6 +21,7 @@ class RandomFact extends Component {
     if (url) {
       fetch(url)
         .then(response => response.json())
+
         .catch(err => console.warn('fetch error' + err))
         .then(json => {
           this.setState({data: json});
