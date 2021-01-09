@@ -11,11 +11,18 @@ import {
   Dimensions,
   TouchableOpacity,
   FlatList,
+  Button,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import LottieView from 'lottie-react-native';
 import ExamplePicker from '../screens/animations/ExamplePicker';
-
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+  useNavigationState,
+  CommonActions,
+} from '@react-navigation/native';
 import {Orientation, OrientationType} from '../utils/Orientation';
 import CalculatorResponse from '../components/CalculatorResponse';
 import CalculatorBrain from '../core/CalculatorBrain';
@@ -24,6 +31,8 @@ import Constants from '../constants/Constants';
 import LayoutBuilder from '../utils/LayoutBuilder';
 import {isNumeric} from '../utils/Utils';
 import Quiz from './Quiz';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {NavigationEvents} from 'react-navigation';
 
 import Toast, {DURATION} from 'react-native-easy-toast';
 const DeviceWidth = Dimensions.get('window').width;
@@ -53,17 +62,17 @@ type State = {
   orientation: number,
 };
 
-export default class Home extends Component<Props, State> {
+export default class Home extends React.Component {
   static defaultProps = {
     brain: new CalculatorBrain(),
   };
 
   constructor(props) {
     super(props);
-    (this.array = []),
+    ((this.array = []), (this.numberEqwl = [])),
       (this.state = {
         display: '',
-        data: {},
+        // data: [],
         date: '',
         month: '',
         trivia: '',
@@ -71,10 +80,11 @@ export default class Home extends Component<Props, State> {
         dateData: {},
         quizeData: [],
         quize4Data: false,
-        numberEqwl: '',
+        numberEqwl: [],
         modalVisible: false,
         quizeModalVisible: false,
-        modalLoop: false,
+        eqwlButton: 0,
+        score: '',
       });
     state = {
       example: EXAMPLES[0],
@@ -86,16 +96,34 @@ export default class Home extends Component<Props, State> {
       bottomDisplay: ' ',
       altButtons: false,
       orientation: OrientationType.Portrait,
+      answer: [],
+      score: '',
     };
   }
 
   componentDidMount() {
     this._updateOrientation();
-    this.resToState();
+    this.getData();
+    // this.willFocusSubscription = this.props.navigation.addListener(
+    //   'willFocus',
+    //   () => {
+    //     this.getData();
+    //   },
+    // );
+    // console.log(this.props.navigation.state);
+
+    // this.resToState();
 
     // this.randomNumber();
   }
+  UNSAFE_componentWillReceiveProps() {
+    this.getData();
 
+    // console.log(this);
+  }
+  // componentWillUnmount() {
+  //   this.willFocusSubscription.remove();
+  // }
   _updateOrientation() {
     const orientation = Orientation.getOrientation();
     this.setState({
@@ -108,14 +136,21 @@ export default class Home extends Component<Props, State> {
   }
 
   _reset() {
+    this.setState({dateData: []});
+    // console.log(this.state);
+
     this.props.brain.clear();
-    this.array.splice(0, this.array.length);
-    // this.randomNumber();
+    // this.state.dateData.splice(0, this.array.length);
+    // console.log(this.state.dateData);
+    // const emptyArray = {};
+    // this.state.dateData.push(emptyArray);
+    // console.log(this.state.dateData);
+
     this.updateDisplay();
     this.setState({
       loader: false,
       trivia: '',
-      quize4Data: false,
+      topDisplay: null,
     });
   }
 
@@ -175,39 +210,78 @@ export default class Home extends Component<Props, State> {
     this.setState({altButtons: !this.state.altButtons});
   }
   updateDisplay(button) {
+    const {navigation} = this.props;
+
     const newTopDisplay = this.props.brain.getDisplay();
     const newBottomDisplay = this.props.brain.getResult();
+    // console.log(button);
 
     if (button === '=') {
-      // console.log(button);
-      this.getTrivia(newTopDisplay);
-      this.quizeToState(newTopDisplay);
+      if (this.state.eqwlButton == 0) {
+        // console.log(this.array);
 
-      this.setState({
-        loader: false,
-        numberEqwl: newTopDisplay,
-      });
+        this.randomNumber();
+        this.setState({
+          eqwlButton: this.state.eqwlButton + 1,
+        });
+        // console.log('first click');
+        // console.log(this.state.eqwlButton);
+      } else if (this.state.eqwlButton == 1) {
+        // this.array = [];
+
+        const round = Math.round(newTopDisplay);
+
+        this.array.push(round);
+        this.numberEqwl.push(round);
+        // const answerEqwdl = this.props.route.params.answerEqwl;
+
+        // console.log(this.numberEqwl);
+        this.checkAnswer(this.array);
+        this.setState({
+          loader: false,
+          numberEqwl: round,
+          eqwlButton: 0,
+        });
+      }
+    } else if (button === undefined) {
+      // this.forceRemount(this.array);
+
+      // console.log(this.state);
+      this.randomNumber();
+
+      // this.array = [];
+      // console.log(this.array);
     }
+
     this.setState({
       topDisplay: newTopDisplay,
       bottomDisplay: newBottomDisplay,
     });
   }
   getTrivia = async number => {
+    // console.log(number);
+
+    const {navigation} = this.props;
+
     const round = Math.round(number);
-    const response = await fetch(
-      `http://numbersapi.com/${round}/trivia?fragment`,
-    );
+    const response = await fetch(`http://numbersapi.com/${round}/trivia?json`);
+
     const data = await response.text();
+
     if (response.status !== 200) {
       this.setState({trivia: 'We couldn’t find a fact for this number YET :('});
     } else {
-      this.array.push(data);
+      // this.array.push(data);
+      // console.log(this.array);
 
-      console.log(this.array);
+      // navigation.navigate('Quiz', {
+      //   data: data,
+      // });
+      // console.log(data);
 
       this.setState({trivia: data, quize4Data: true});
     }
+    // console.log(data);
   };
 
   resToState() {
@@ -223,7 +297,7 @@ export default class Home extends Component<Props, State> {
         .catch(err => console.warn('fetch error' + err))
         .then(json => {
           this.setState({dateData: json, date: date});
-          console.log(json);
+          // console.log(json);
         })
         .catch(err => console.warn('json not loaded' + err));
     }
@@ -234,7 +308,7 @@ export default class Home extends Component<Props, State> {
     for (let index = 0; index < 3; index++) {
       this.array.push(Math.floor(Math.random() * 100) + 1);
     }
-    console.log(this.array);
+    // console.log(this.array);
 
     // this.array.push({title : this.state.textInput_Holder});
   }
@@ -257,8 +331,8 @@ export default class Home extends Component<Props, State> {
 
             // this.setState({quizeData: json});
 
-            console.log('quizeData');
-            console.log(this.array);
+            // console.log('quizeData');
+            // console.log(this.array);
           })
           .catch(err => console.warn('json not loaded' + err));
       }
@@ -274,6 +348,59 @@ export default class Home extends Component<Props, State> {
     });
     this.setState({quizeModalVisible: visible});
   };
+  checkAnswer = number => {
+    // console.log(number);
+    let url;
+    url = `http://numbersapi.com/${number}`;
+    if (url) {
+      fetch(url)
+        .then(response => response.json())
+        .catch(err => console.warn('fetch error' + err))
+        .then(json => {
+          this.setState({dateData: json});
+          this.loopFacts(json);
+          // console.log(json);
+        })
+        .catch(err => console.warn('json not loaded' + err));
+    }
+  };
+
+  loopFacts = facts => {
+    const answerEqwl = this.state.numberEqwl;
+    const {navigation} = this.props;
+    const {route} = this.props;
+    this.props.navigation.navigate('Quiz', {
+      data: facts,
+      answerEqwl: answerEqwl,
+      onSelect: this.onSelect,
+    });
+  };
+
+  getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('score');
+      // console.log(value);
+
+      this.setState({score: value});
+      // console.log(value);
+
+      if (value !== null) {
+        // value previously stored
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
+  onSelect = data => {
+    this.setState(data);
+  };
+  forceRemount = () => {
+    this.setState(({data}) => ({
+      data: data + 1,
+    }));
+  };
+
   render() {
     const buttonContainer = LayoutBuilder.buildButtonContainer(
       this,
@@ -295,229 +422,19 @@ export default class Home extends Component<Props, State> {
       example,
       modalVisible,
       quizeModalVisible,
-      modalLoop,
       numberEqwl,
+      dateData,
     } = this.state;
-    if (this.state.loader) {
-      return (
-        <View style={styles.container} accessible={true}>
-          <View style={styles.fact}>
-            {this.state.trivia ? (
-              <View style={styles.randomEqwl}>
-                <View style={styles.centeredView}>
-                  <LottieView
-                    ref={this.setAnim}
-                    autoPlay={!progress}
-                    source={require('../screens/animations/starSuccess.json')}
-                    progress={progress}
-                    loop={false}
-                    enableMergePathsAndroidForKitKatAndAbove
-                  />
-                </View>
-                <Text style={[styles.randomText]} adjustsFontSizeToFit>
-                  {this.state.trivia}
-                </Text>
-              </View>
-            ) : (
-              <LottieView
-                ref={this.setAnim}
-                autoPlay={!progress}
-                source={require('../screens/animations/HamburgerArrow.json')}
-                progress={progress}
-                loop={loop}
-                enableMergePathsAndroidForKitKatAndAbove
-              />
-            )}
-          </View>
-          <CalculatorResponse
-            topDisplay={this.state.topDisplay}
-            bottomDisplay={this.state.bottomDisplay}
-            orientation={this.state.orientation}
-          />
-          {buttonContainer}
-        </View>
-      );
-    }
+
     return (
       <View
         style={styles.container}
         accessible={true}
         onLayout={this._updateOrientation.bind(this)}>
         <Toast ref="toast" position="top" opacity={0.8} />
-        <View style={styles.fact}>
-          <View style={styles.centeredView}>
-            {/* date modal */}
-            <Modal
-              animationInTiming={1000}
-              animationOutTiming={1000}
-              backdropTransitionInTiming={800}
-              backdropTransitionOutTiming={800}
-              animationIn="zoomInDown"
-              animationOut="zoomOutUp"
-              isVisible={modalVisible}
-              onRequestClose={() => {
-                console.log('Modal has been closed.');
-              }}>
-              <View style={styles.content}>
-                <Text style={styles.modalText}>{this.state.dateData.text}</Text>
-              </View>
-              <View style={styles.buttonsModal}>
-                <TouchableOpacity
-                  style={{...styles.openButton, backgroundColor: 'black'}}
-                  onPress={() => {
-                    this.setModalVisible(!modalVisible);
-                  }}>
-                  <Text style={styles.textStyle}>Tomorrow</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{...styles.openButton, backgroundColor: 'black'}}
-                  onPress={() => {
-                    this.setModalVisible(!modalVisible);
-                  }}>
-                  <Text style={styles.textStyle}>Explore</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{...styles.openButton, backgroundColor: 'black'}}
-                  onPress={() => {
-                    this.setModalVisible(!modalVisible);
-                  }}>
-                  <Text style={styles.textStyle}>Close</Text>
-                </TouchableOpacity>
-              </View>
-            </Modal>
-            {/* quize modal */}
-            <Modal
-              animationInTiming={1000}
-              animationOutTiming={1000}
-              backdropTransitionInTiming={800}
-              backdropTransitionOutTiming={800}
-              animationIn="zoomInDown"
-              animationOut="zoomOutUp"
-              isVisible={quizeModalVisible}
-              onRequestClose={() => {
-                console.log('Modal has been closed.');
-              }}>
-              <Text style={styles.textStyleHeaderQuiz}>
-                Number {this.state.numberEqwl} is...
-              </Text>
 
-              <View style={styles.quizeContainer}>
-                {/* <Quiz /> */}
-                <FlatList
-                  data={this.array}
-                  renderItem={({item}) => (
-                    <View>
-                      <TouchableOpacity
-                        style={styles.twoTopQuize}
-                        onPress={() => {
-                          this.setQuizeModalVisible(!quizeModalVisible);
-                        }}>
-                        <Text style={styles.textStyle}>{item}</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                  scrollEnabled={false}
-                  numColumns={2}
-                  keyExtractor={(item, index) => index.toString()}
-                />
-              </View>
-            </Modal>
-            {/* <Text style={[styles.random]}>EQWL</Text> */}
-          </View>
-          {this.state.loader ? (
-            <LottieView
-              ref={this.setAnim}
-              autoPlay={!progress}
-              source={require('../screens/animations/HamburgerArrow.json')}
-              progress={progress}
-              loop={loop}
-              enableMergePathsAndroidForKitKatAndAbove
-            />
-          ) : (
-            <View style={styles.headerIcons}>
-              {this.state.dateData.text ? (
-                <TouchableOpacity
-                  style={styles.playButton}
-                  onPress={() => {
-                    this.setModalVisible(true);
-                  }}>
-                  <LottieView
-                    ref={this.setAnim}
-                    autoPlay={!progress}
-                    source={require('../screens/animations/dateAnimation.json')}
-                    progress={progress}
-                    loop={false}
-                    enableMergePathsAndroidForKitKatAndAbove
-                  />
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.playButton}>
-                  <LottieView
-                    ref={this.setAnim}
-                    autoPlay={progress}
-                    source={require('../screens/animations/dateAnimation.json')}
-                    progress={progress}
-                    loop={false}
-                    enableMergePathsAndroidForKitKatAndAbove
-                  />
-                </View>
-              )}
-              {this.state.quize4Data ? (
-                <TouchableOpacity
-                  style={styles.playButtonSecond}
-                  onPress={() => {
-                    this.setQuizeModalVisible(true);
-                  }}>
-                  <LottieView
-                    ref={this.setAnim}
-                    autoPlay={!progress}
-                    source={require('../screens/animations/dateAnimation.json')}
-                    progress={progress}
-                    loop={false}
-                    enableMergePathsAndroidForKitKatAndAbove
-                  />
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.playButtonSecond}>
-                  <LottieView
-                    ref={this.setAnim}
-                    autoPlay={progress}
-                    source={require('../screens/animations/dateAnimation.json')}
-                    progress={progress}
-                    loop={false}
-                    enableMergePathsAndroidForKitKatAndAbove
-                  />
-                </View>
-              )}
-              {/* {this.state.dateData.text ? (
-                <TouchableOpacity
-                  style={styles.playButtonThird}
-                  onPress={() => {
-                    this.setQuizeModalVisible(true);
-                  }}>
-                  <LottieView
-                    ref={this.setAnim}
-                    autoPlay={!progress}
-                    source={require('../screens/animations/dateAnimation.json')}
-                    progress={progress}
-                    loop={false}
-                    enableMergePathsAndroidForKitKatAndAbove
-                  />
-                </TouchableOpacity>
-              ) : ( */}
-              <View style={styles.playButtonThird}>
-                <LottieView
-                  ref={this.setAnim}
-                  autoPlay={!progress}
-                  source={require('../screens/animations/comingSoon.json')}
-                  progress={progress}
-                  loop={false}
-                  enableMergePathsAndroidForKitKatAndAbove
-                />
-              </View>
-              {/* )} */}
-            </View>
-          )}
+        <View style={styles.fact}>
+          <Text style={styles.text}>EQWL Points: {this.state.score}</Text>
         </View>
 
         <CalculatorResponse
@@ -549,17 +466,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   fact: {
-    // marginTop: 25,
-    // flex: 1,
-    justifyContent: 'center',
+    alignItems: 'center',
 
-    height: '20%',
+    marginTop: 45,
+    // flex: 1,
+    // justifyContent: 'center',
+    height: '7%',
     width: '100%',
-    backgroundColor: '#fff',
-    color: '#008033',
-    borderBottomWidth: 0.5,
-    borderColor: '#000000',
-    paddingBottom: 40,
+    // backgroundColor: 'pink',
+    // color: '#008033',
+    // borderBottomWidth: 0.5,
+    // borderColor: '#000000',
+    // paddingBottom: 40,
   },
   eqwlFact: {
     marginTop: 45,
@@ -616,6 +534,15 @@ const styles = StyleSheet.create({
     // marginBottom: 40,
 
     padding: 2,
+  },
+  text: {
+    marginTop: 20,
+    width: '80%',
+    fontSize: 20,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    alignContent: 'flex-start',
+    fontFamily: 'AvenirNext-Regular',
   },
   headerIcons: {
     flex: 1,
