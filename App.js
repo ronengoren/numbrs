@@ -10,6 +10,7 @@ import FavNumber from './src/screens/FavNumber';
 import HomeScreen from './src/screens/HomeScreen';
 import RandomFact from './src/screens/RandomFact';
 import Dashboard from './src/screens/Dashboard';
+import Dates from './src/screens/Dates';
 
 import Home from './src/screens/Home';
 import Quiz from './src/screens/Quiz';
@@ -38,7 +39,7 @@ function HomeStackScreen() {
       />
       <Stack.Screen
         name="Date"
-        component={RandomFact}
+        component={Dates}
         options={{headerShown: false}}
       />
       <Stack.Screen
