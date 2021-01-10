@@ -42,7 +42,7 @@ const DATA = [
     id: '4',
     title: 'Dates',
     lottiAnimation: require('../screens/animations/Dates.json'),
-    screen: 'Quiz',
+    screen: 'Date',
   },
   {
     id: '5',
